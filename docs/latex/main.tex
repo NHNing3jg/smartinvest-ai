@@ -1,0 +1,52 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{\textbf{SmartInvest AI} \\ 
+Plateforme intelligente d’aide à la décision boursière}
+\author{
+Nour Ben Hassine \\ 
+Hadir Felli \\ 
+Nouha Briki \\ 
+Nouhe Ben Khelil
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\chapter{Introduction}
+\input{chapters/introduction}
+
+\chapter{Architecture du Projet}
+\input{chapters/architecture}
+
+\chapter{Données et Prétraitement}
+\input{chapters/data}
+
+\chapter{Business Intelligence}
+\input{chapters/bi}
+
+\chapter{Machine Learning}
+\input{chapters/ml}
+
+\chapter{Analyse de Sentiment (NLP)}
+\input{chapters/nlp}
+
+\chapter{Conclusion}
+\input{chapters/conclusion}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
