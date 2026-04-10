@@ -9,20 +9,23 @@ from sqlalchemy import create_engine, text
 
 RAW_YF = Path("data/raw/yfinance")
 RAW_FRED = Path("data/raw/fred")
+RAW_OIL = Path("data/raw/oil")
+
 
 def get_engine():
     load_dotenv()
     host = os.getenv("DB_HOST", "localhost")
     port = os.getenv("DB_PORT", "5432")
-    db   = os.getenv("DB_NAME", "smartinvest_dw")
+    db = os.getenv("DB_NAME", "smartinvest_dw")
     user = os.getenv("DB_USER", "postgres")
-    pwd  = os.getenv("DB_PASSWORD", "")
+    pwd = os.getenv("DB_PASSWORD", "")
 
     if not pwd:
         raise ValueError("DB_PASSWORD manquant dans .env")
 
     url = f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{db}"
     return create_engine(url)
+
 
 def upsert_dim_time(engine, dates):
     # dates = liste de date (python date)
@@ -40,35 +43,52 @@ def upsert_dim_time(engine, dates):
 
     with engine.begin() as con:
         for _, r in df.iterrows():
-            con.execute(text("""
-                INSERT INTO smartinvest.dim_time(date_id, year, month, day, week, quarter)
-                VALUES (:date_id, :year, :month, :day, :week, :quarter)
-                ON CONFLICT (date_id) DO NOTHING
-            """), r.to_dict())
+            con.execute(
+                text("""
+                    INSERT INTO smartinvest.dim_time(date_id, year, month, day, week, quarter)
+                    VALUES (:date_id, :year, :month, :day, :week, :quarter)
+                    ON CONFLICT (date_id) DO NOTHING
+                """),
+                r.to_dict()
+            )
+
 
 def get_or_create_asset(engine, ticker: str):
     asset_type = "index" if ticker.startswith("^") else "stock"
-    with engine.begin() as con:
-        con.execute(text("""
-            INSERT INTO smartinvest.dim_asset(ticker, asset_type)
-            VALUES (:ticker, :asset_type)
-            ON CONFLICT (ticker) DO NOTHING
-        """), {"ticker": ticker, "asset_type": asset_type})
 
-        asset_id = con.execute(text("""
-            SELECT asset_id FROM smartinvest.dim_asset WHERE ticker=:ticker
-        """), {"ticker": ticker}).scalar()
+    with engine.begin() as con:
+        con.execute(
+            text("""
+                INSERT INTO smartinvest.dim_asset(ticker, asset_type)
+                VALUES (:ticker, :asset_type)
+                ON CONFLICT (ticker) DO NOTHING
+            """),
+            {"ticker": ticker, "asset_type": asset_type}
+        )
+
+        asset_id = con.execute(
+            text("""
+                SELECT asset_id
+                FROM smartinvest.dim_asset
+                WHERE ticker = :ticker
+            """),
+            {"ticker": ticker}
+        ).scalar()
 
     return asset_id
 
+
 def load_market(engine):
     if not RAW_YF.exists():
-        raise FileNotFoundError("data/raw/yfinance introuvable. Lancez d’abord l’ingestion yfinance.")
+        raise FileNotFoundError(
+            "data/raw/yfinance introuvable. Lancez d’abord l’ingestion yfinance."
+        )
 
     for csv_path in RAW_YF.glob("*.csv"):
         df = pd.read_csv(csv_path)
 
-        # colonnes attendues : ticker,date,open,high,low,close,(adj_close),volume,(dividends),(stock_splits)
+        # colonnes attendues :
+        # ticker,date,open,high,low,close,(adj_close),volume,(dividends),(stock_splits)
         if "date" not in df.columns or "ticker" not in df.columns:
             raise ValueError(f"Colonnes manquantes dans {csv_path.name}")
 
@@ -80,37 +100,43 @@ def load_market(engine):
 
         with engine.begin() as con:
             for _, r in df.iterrows():
-                con.execute(text("""
-                    INSERT INTO smartinvest.fact_market_daily
-                    (date_id, asset_id, open, high, low, close, adj_close, volume, dividends, stock_splits)
-                    VALUES (:date_id, :asset_id, :open, :high, :low, :close, :adj_close, :volume, :dividends, :stock_splits)
-                    ON CONFLICT (date_id, asset_id) DO UPDATE SET
-                      open=EXCLUDED.open,
-                      high=EXCLUDED.high,
-                      low=EXCLUDED.low,
-                      close=EXCLUDED.close,
-                      adj_close=EXCLUDED.adj_close,
-                      volume=EXCLUDED.volume,
-                      dividends=EXCLUDED.dividends,
-                      stock_splits=EXCLUDED.stock_splits
-                """), {
-                    "date_id": r["date"],
-                    "asset_id": asset_id,
-                    "open": r.get("open"),
-                    "high": r.get("high"),
-                    "low": r.get("low"),
-                    "close": r.get("close"),
-                    "adj_close": r.get("adj_close"),
-                    "volume": r.get("volume"),
-                    "dividends": r.get("dividends"),
-                    "stock_splits": r.get("stock_splits"),
-                })
+                con.execute(
+                    text("""
+                        INSERT INTO smartinvest.fact_market_daily
+                        (date_id, asset_id, open, high, low, close, adj_close, volume, dividends, stock_splits)
+                        VALUES (:date_id, :asset_id, :open, :high, :low, :close, :adj_close, :volume, :dividends, :stock_splits)
+                        ON CONFLICT (date_id, asset_id) DO UPDATE SET
+                            open = EXCLUDED.open,
+                            high = EXCLUDED.high,
+                            low = EXCLUDED.low,
+                            close = EXCLUDED.close,
+                            adj_close = EXCLUDED.adj_close,
+                            volume = EXCLUDED.volume,
+                            dividends = EXCLUDED.dividends,
+                            stock_splits = EXCLUDED.stock_splits
+                    """),
+                    {
+                        "date_id": r["date"],
+                        "asset_id": asset_id,
+                        "open": r.get("open"),
+                        "high": r.get("high"),
+                        "low": r.get("low"),
+                        "close": r.get("close"),
+                        "adj_close": r.get("adj_close"),
+                        "volume": r.get("volume"),
+                        "dividends": r.get("dividends"),
+                        "stock_splits": r.get("stock_splits"),
+                    }
+                )
 
         print(f"[OK] Market loaded: {csv_path.name}")
 
+
 def load_macro(engine):
     if not RAW_FRED.exists():
-        raise FileNotFoundError("data/raw/fred introuvable. Lancez d’abord l’ingestion FRED.")
+        raise FileNotFoundError(
+            "data/raw/fred introuvable. Lancez d’abord l’ingestion FRED."
+        )
 
     for csv_path in RAW_FRED.glob("*.csv"):
         df = pd.read_csv(csv_path)
@@ -125,21 +151,85 @@ def load_macro(engine):
         upsert_dim_time(engine, df["date"].tolist())
 
         with engine.begin() as con:
-            con.execute(text("""
-                INSERT INTO smartinvest.dim_macro_series(series_id, label)
-                VALUES (:series_id, :label)
-                ON CONFLICT (series_id) DO NOTHING
-            """), {"series_id": series_id, "label": series_id})
+            con.execute(
+                text("""
+                    INSERT INTO smartinvest.dim_macro_series(series_id, label)
+                    VALUES (:series_id, :label)
+                    ON CONFLICT (series_id) DO NOTHING
+                """),
+                {"series_id": series_id, "label": series_id}
+            )
 
             for _, r in df.iterrows():
-                con.execute(text("""
-                    INSERT INTO smartinvest.fact_macro_daily(date_id, series_id, value)
-                    VALUES (:date_id, :series_id, :value)
-                    ON CONFLICT (date_id, series_id) DO UPDATE SET
-                      value=EXCLUDED.value
-                """), {"date_id": r["date"], "series_id": series_id, "value": r["value"]})
+                con.execute(
+                    text("""
+                        INSERT INTO smartinvest.fact_macro_daily(date_id, series_id, value)
+                        VALUES (:date_id, :series_id, :value)
+                        ON CONFLICT (date_id, series_id) DO UPDATE SET
+                            value = EXCLUDED.value
+                    """),
+                    {
+                        "date_id": r["date"],
+                        "series_id": series_id,
+                        "value": r["value"],
+                    }
+                )
 
         print(f"[OK] Macro loaded: {csv_path.name}")
+
+
+def load_oil(engine):
+    if not RAW_OIL.exists():
+        raise FileNotFoundError(
+            "data/raw/oil introuvable. Lancez d’abord l’ingestion oil."
+        )
+
+    for csv_path in RAW_OIL.glob("*.csv"):
+        df = pd.read_csv(csv_path)
+
+        # colonnes attendues :
+        # ticker,date,open,high,low,close,(adj_close),volume,(dividends),(stock_splits)
+        if "date" not in df.columns or "ticker" not in df.columns:
+            raise ValueError(f"Colonnes manquantes dans {csv_path.name}")
+
+        df["date"] = pd.to_datetime(df["date"]).dt.date
+        ticker = str(df["ticker"].iloc[0])
+
+        upsert_dim_time(engine, df["date"].tolist())
+
+        with engine.begin() as con:
+            for _, r in df.iterrows():
+                con.execute(
+                    text("""
+                        INSERT INTO smartinvest.fact_oil_daily
+                        (date_id, ticker, open, high, low, close, adj_close, volume, dividends, stock_splits)
+                        VALUES (:date_id, :ticker, :open, :high, :low, :close, :adj_close, :volume, :dividends, :stock_splits)
+                        ON CONFLICT (date_id, ticker) DO UPDATE SET
+                            open = EXCLUDED.open,
+                            high = EXCLUDED.high,
+                            low = EXCLUDED.low,
+                            close = EXCLUDED.close,
+                            adj_close = EXCLUDED.adj_close,
+                            volume = EXCLUDED.volume,
+                            dividends = EXCLUDED.dividends,
+                            stock_splits = EXCLUDED.stock_splits
+                    """),
+                    {
+                        "date_id": r["date"],
+                        "ticker": ticker,
+                        "open": r.get("open"),
+                        "high": r.get("high"),
+                        "low": r.get("low"),
+                        "close": r.get("close"),
+                        "adj_close": r.get("adj_close"),
+                        "volume": r.get("volume"),
+                        "dividends": r.get("dividends"),
+                        "stock_splits": r.get("stock_splits"),
+                    }
+                )
+
+        print(f"[OK] Oil loaded: {csv_path.name}")
+
 
 def main():
     engine = get_engine()
@@ -150,7 +240,10 @@ def main():
 
     load_market(engine)
     load_macro(engine)
+    load_oil(engine)
+
     print("[INFO] Load complete ✅")
+
 
 if __name__ == "__main__":
     main()

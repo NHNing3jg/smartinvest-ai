@@ -94,3 +94,21 @@ SELECT
   f.value
 FROM smartinvest.fact_macro_daily f
 JOIN smartinvest.dim_macro_series s ON s.series_id = f.series_id;
+CREATE OR REPLACE VIEW smartinvest.v_oil_daily AS
+SELECT
+    f.date_id,
+    f.ticker,
+    f.open,
+    f.high,
+    f.low,
+    f.close,
+    f.adj_close,
+    f.volume,
+    CASE
+        WHEN LAG(f.close) OVER (PARTITION BY f.ticker ORDER BY f.date_id) IS NULL THEN NULL
+        WHEN LAG(f.close) OVER (PARTITION BY f.ticker ORDER BY f.date_id) = 0 THEN NULL
+        ELSE (
+            f.close / LAG(f.close) OVER (PARTITION BY f.ticker ORDER BY f.date_id)
+        ) - 1
+    END AS daily_return
+FROM smartinvest.fact_oil_daily f;
