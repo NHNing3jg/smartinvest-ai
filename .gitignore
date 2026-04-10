@@ -209,3 +209,5 @@ __marimo__/
 data/raw/
 data/processed/
 *.pyc
+
+docs/latex.zip
