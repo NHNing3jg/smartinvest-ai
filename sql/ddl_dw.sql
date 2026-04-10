@@ -43,3 +43,16 @@ CREATE TABLE IF NOT EXISTS smartinvest.fact_macro_daily (
   value NUMERIC,
   PRIMARY KEY (date_id, series_id)
 );
+CREATE TABLE IF NOT EXISTS smartinvest.fact_oil_daily (
+    date_id DATE NOT NULL REFERENCES smartinvest.dim_time(date_id),
+    ticker TEXT NOT NULL,
+    open NUMERIC,
+    high NUMERIC,
+    low NUMERIC,
+    close NUMERIC,
+    adj_close NUMERIC,
+    volume BIGINT,
+    dividends NUMERIC,
+    stock_splits NUMERIC,
+    PRIMARY KEY (date_id, ticker)
+);
