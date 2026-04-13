@@ -159,19 +159,29 @@ html, body, [class*="css"] { font-family: 'DM Mono', monospace; }
     text-transform: uppercase;
 }
 
-/* Pills */
-.signal-pill {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.70rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+/* Explanation cards */
+.explanation-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.8rem;
 }
-.buy-pill  { background: rgba(0,200,120,0.12); color: #00c878; }
-.hold-pill { background: rgba(245,158,11,0.12); color: #f59e0b; }
-.sell-pill { background: rgba(255,77,109,0.12); color: #ff4d6d; }
+.explanation-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #eef2f7;
+    margin-bottom: 0.35rem;
+}
+.explanation-text {
+    font-size: 0.78rem;
+    color: #a8b3c2;
+    line-height: 1.6;
+}
+.buy-text { color: #00c878; }
+.hold-text { color: #f59e0b; }
+.sell-text { color: #ff4d6d; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -347,6 +357,7 @@ st.dataframe(
             "oil_return",
             "sp500_return",
             "nasdaq_return",
+            "explanation",
         ]
     ].rename(columns={"proba_up_pct": "proba_up (%)"}),
     use_container_width=True,
@@ -365,8 +376,33 @@ st.dataframe(
         "oil_return": st.column_config.NumberColumn("Oil Return", format="%.4f"),
         "sp500_return": st.column_config.NumberColumn("S&P500 Return", format="%.4f"),
         "nasdaq_return": st.column_config.NumberColumn("NASDAQ Return", format="%.4f"),
+        "explanation": st.column_config.TextColumn("Explanation", width="large"),
     }
 )
+
+# ----------------------------------------------------------
+# EXPLANATIONS
+# ----------------------------------------------------------
+
+st.markdown('<div class="section-title">AI Explanations</div>', unsafe_allow_html=True)
+
+for _, row in filtered_df.iterrows():
+    signal_class = {
+        "BUY": "buy-text",
+        "HOLD": "hold-text",
+        "SELL": "sell-text"
+    }.get(row["signal"], "")
+
+    st.markdown(f"""
+    <div class="explanation-card">
+        <div class="explanation-title">
+            {row['ticker']} — <span class="{signal_class}">{row['signal']}</span>
+        </div>
+        <div class="explanation-text">
+            {row['explanation']}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------
 # CHARTS
@@ -468,7 +504,7 @@ with col_buy:
         st.success("Top BUY opportunities identified by the AI advisor:")
         st.dataframe(
             top_buy[
-                ["ticker", "proba_up", "confidence", "advisor_score", "momentum_5", "rolling_vol_10"]
+                ["ticker", "proba_up", "confidence", "advisor_score", "momentum_5", "rolling_vol_10", "explanation"]
             ],
             use_container_width=True,
             hide_index=True
@@ -487,7 +523,7 @@ with col_sell:
         st.warning("Lowest-ranked assets identified by the AI advisor:")
         st.dataframe(
             top_sell[
-                ["ticker", "proba_up", "confidence", "advisor_score", "momentum_5", "rolling_vol_10"]
+                ["ticker", "proba_up", "confidence", "advisor_score", "momentum_5", "rolling_vol_10", "explanation"]
             ],
             use_container_width=True,
             hide_index=True
