@@ -208,6 +208,8 @@ html, body, [class*="css"] {
 RECO_PATH = Path("outputs/latest_recommendations.csv")
 BACKTEST_SUMMARY_PATH = Path("outputs/backtest_summary.csv")
 BACKTEST_METRICS_PATH = Path("outputs/backtest_metrics.csv")
+PORTFOLIO_ALLOCATION_PATH = Path("outputs/portfolio_allocation.csv")
+PORTFOLIO_SUMMARY_PATH = Path("outputs/portfolio_summary.csv")
 
 # ----------------------------------------------------------
 # LOAD DATA
@@ -240,6 +242,20 @@ def load_backtest_metrics() -> pd.DataFrame:
     return pd.read_csv(BACKTEST_METRICS_PATH)
 
 
+@st.cache_data(ttl=300, show_spinner=False)
+def load_portfolio_allocation() -> pd.DataFrame:
+    if not PORTFOLIO_ALLOCATION_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(PORTFOLIO_ALLOCATION_PATH)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def load_portfolio_summary() -> pd.DataFrame:
+    if not PORTFOLIO_SUMMARY_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(PORTFOLIO_SUMMARY_PATH)
+
+
 try:
     reco_df = load_recommendations()
 except Exception as e:
@@ -248,6 +264,8 @@ except Exception as e:
 
 backtest_summary_df = load_backtest_summary()
 backtest_metrics_df = load_backtest_metrics()
+portfolio_allocation_df = load_portfolio_allocation()
+portfolio_summary_df = load_portfolio_summary()
 
 # ----------------------------------------------------------
 # SIDEBAR
@@ -293,7 +311,7 @@ with st.sidebar:
 
     st.divider()
     st.markdown(
-        "<span style='font-size:0.7rem;color:#2a3a4a;'>v1.1.0 — SmartInvest BI-AI</span>",
+        "<span style='font-size:0.7rem;color:#2a3a4a;'>v1.3.0 — SmartInvest BI-AI</span>",
         unsafe_allow_html=True
     )
 
@@ -658,4 +676,73 @@ else:
 - HOLD captures assets with more neutral or mixed profiles.
 - This backtest strengthens the credibility of the advisor by validating signals on historical data.
         """
+    )
+
+# ----------------------------------------------------------
+# PORTFOLIO SIMULATION
+# ----------------------------------------------------------
+
+st.markdown('<div class="section-title">Portfolio Simulation</div>', unsafe_allow_html=True)
+
+if portfolio_allocation_df.empty or portfolio_summary_df.empty:
+    st.warning("Portfolio simulation files not found. Run `python -m src.ml.portfolio_simulation` first.")
+else:
+    portfolio_map = dict(zip(portfolio_summary_df["metric"], portfolio_summary_df["value"]))
+
+    p1, p2, p3, p4 = st.columns(4)
+    p1.metric("Selected Assets", str(portfolio_map.get("Number of selected assets", 0)))
+    p2.metric("Expected Return", str(portfolio_map.get("Portfolio expected return", 0)))
+    p3.metric("Risk Score", str(portfolio_map.get("Portfolio risk score", 0)))
+    p4.metric("Risk Level", str(portfolio_map.get("Portfolio risk level", "N/A")))
+
+    st.markdown("### Portfolio Allocation Table")
+
+    st.dataframe(
+        portfolio_allocation_df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "ticker": st.column_config.TextColumn("Ticker"),
+            "signal": st.column_config.TextColumn("Signal"),
+            "confidence": st.column_config.TextColumn("Confidence"),
+            "proba_up": st.column_config.NumberColumn("Proba Up", format="%.4f"),
+            "advisor_score": st.column_config.NumberColumn("Advisor Score", format="%.4f"),
+            "expected_return": st.column_config.NumberColumn("Expected Return", format="%.4f"),
+            "risk_score": st.column_config.NumberColumn("Risk Score", format="%.4f"),
+            "weight": st.column_config.NumberColumn("Weight", format="%.4f"),
+            "explanation": st.column_config.TextColumn("Explanation", width="large"),
+        }
+    )
+
+    pc1, pc2 = st.columns(2)
+
+    with pc1:
+        fig_alloc = px.pie(
+            portfolio_allocation_df,
+            names="ticker",
+            values="weight",
+            title="Portfolio Allocation Weights"
+        )
+        fig_alloc.update_layout(template="plotly_dark")
+        st.plotly_chart(fig_alloc, use_container_width=True)
+
+    with pc2:
+        fig_weight = px.bar(
+            portfolio_allocation_df.sort_values("weight", ascending=False),
+            x="ticker",
+            y="weight",
+            color="ticker",
+            text="weight",
+            title="Portfolio Weights by Asset"
+        )
+        fig_weight.update_traces(textposition="outside")
+        fig_weight.update_layout(
+            template="plotly_dark",
+            xaxis_title="Asset",
+            yaxis_title="Weight"
+        )
+        st.plotly_chart(fig_weight, use_container_width=True)
+
+    st.success(
+        "This portfolio simulation transforms BUY recommendations into an investable allocation."
     )
