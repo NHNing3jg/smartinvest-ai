@@ -15,7 +15,7 @@ export default function Sidebar() {
         <div className="brand-mark">SI</div>
         <div>
           <strong>SmartInvest</strong>
-          <span>AI</span>
+          <span>AI Innovation Lab</span>
         </div>
       </div>
 
@@ -35,6 +35,11 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      <div className="sidebar-note">
+        <span>BI + AI</span>
+        <strong>Student fintech studio</strong>
+      </div>
     </aside>
   );
 }
