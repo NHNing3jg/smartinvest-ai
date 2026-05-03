@@ -211,3 +211,29 @@ data/processed/
 *.pyc
 
 docs/latex.zip
+
+# Node
+frontend/node_modules/
+node_modules/
+
+# Logs
+*.log
+
+# Build
+dist/
+build/
+
+# Env
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# ML / outputs (optionnel mais conseillé)
+outputs/
+models/
+
+# Vite / TS cache
+frontend/vite-dev.log
+frontend/tsconfig.tsbuildinfo
