@@ -12,7 +12,9 @@ export default function KpiCard({ title, value, detail, icon: Icon }: KpiCardPro
     <article className="kpi-card">
       <div className="kpi-card-header">
         <span>{title}</span>
-        <Icon size={18} />
+        <span className="kpi-icon">
+          <Icon size={18} />
+        </span>
       </div>
       <strong>{value}</strong>
       <p>{detail}</p>
