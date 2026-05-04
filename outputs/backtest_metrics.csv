@@ -1,0 +1,7 @@
+metric,value
+BUY mean next-day return,0.0046
+SELL mean next-day return,0.0043
+HOLD mean next-day return,0.0019
+BUY win rate,60.71
+SELL win rate,47.62
+HOLD win rate,46.15
