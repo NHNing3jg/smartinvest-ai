@@ -1,14 +1,17 @@
-export type PortfolioPosition = {
+export type PortfolioAllocationRow = {
   ticker: string;
-  shares: number;
-  average_cost: number;
-  current_price?: number;
-  market_value?: number;
-  allocation_percent?: number;
+  signal: string | null;
+  confidence: string | null;
+  proba_up: number | null;
+  advisor_score: number | null;
+  expected_return: number | null;
+  risk_score: number | null;
+  weight: number | null;
+  explanation: string | null;
 };
 
-export type PortfolioSummary = {
-  total_value: number;
-  cash_balance?: number;
-  positions_count: number;
+export type PortfolioSummaryRow = {
+  expected_return: number | null;
+  risk_score: number | null;
+  risk_level: string | null;
 };
