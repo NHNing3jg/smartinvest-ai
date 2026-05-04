@@ -211,3 +211,14 @@ data/processed/
 *.pyc
 
 docs/latex.zip
+
+# Frontend / React / Vite
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/vite-dev.log
+frontend/tsconfig.tsbuildinfo
+
+# Local npm mistakes
+/package-lock.json
