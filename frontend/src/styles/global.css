@@ -731,6 +731,40 @@ p {
   background: linear-gradient(135deg, var(--rose), var(--lavender));
 }
 
+.backtest-kpi-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.backtest-kpi-grid .kpi-card:nth-child(5)::before {
+  background:
+    linear-gradient(135deg, rgba(255, 216, 107, 0.36), rgba(255, 123, 123, 0.13)),
+    linear-gradient(315deg, rgba(18, 214, 197, 0.12), rgba(255, 255, 255, 0));
+}
+
+.backtest-kpi-grid .kpi-card:nth-child(6)::before {
+  background:
+    linear-gradient(135deg, rgba(255, 123, 123, 0.32), rgba(255, 93, 162, 0.14)),
+    linear-gradient(315deg, rgba(168, 139, 255, 0.16), rgba(255, 255, 255, 0));
+}
+
+.backtest-kpi-grid .kpi-card:nth-child(7)::before {
+  background:
+    linear-gradient(135deg, rgba(39, 125, 255, 0.26), rgba(18, 214, 197, 0.14)),
+    linear-gradient(315deg, rgba(255, 216, 107, 0.18), rgba(255, 255, 255, 0));
+}
+
+.backtest-kpi-grid .kpi-card:nth-child(5) .kpi-icon {
+  background: linear-gradient(135deg, var(--yellow), var(--coral));
+}
+
+.backtest-kpi-grid .kpi-card:nth-child(6) .kpi-icon {
+  background: linear-gradient(135deg, var(--coral), var(--rose));
+}
+
+.backtest-kpi-grid .kpi-card:nth-child(7) .kpi-icon {
+  background: linear-gradient(135deg, var(--blue), var(--turquoise));
+}
+
 .kpi-card strong {
   color: #121b31;
   font-size: 1.75rem;
@@ -814,6 +848,42 @@ p {
     linear-gradient(90deg, rgba(93, 242, 169, 0.14), rgba(255, 216, 107, 0.12));
 }
 
+.backtest-table {
+  min-width: 760px;
+  table-layout: fixed;
+}
+
+.backtest-table th,
+.backtest-table td {
+  padding: 13px 10px;
+}
+
+.backtest-table th:nth-child(1),
+.backtest-table td:nth-child(1) {
+  width: 13%;
+}
+
+.backtest-table th:nth-child(2),
+.backtest-table td:nth-child(2) {
+  width: 10%;
+}
+
+.backtest-table th:nth-child(3),
+.backtest-table td:nth-child(3),
+.backtest-table th:nth-child(4),
+.backtest-table td:nth-child(4) {
+  width: 16%;
+}
+
+.backtest-table th:nth-child(5),
+.backtest-table td:nth-child(5),
+.backtest-table th:nth-child(6),
+.backtest-table td:nth-child(6),
+.backtest-table th:nth-child(7),
+.backtest-table td:nth-child(7) {
+  width: 15%;
+}
+
 .ticker-cell {
   color: #13223c;
   font-size: 0.98rem;
@@ -888,6 +958,93 @@ p {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.42)),
     linear-gradient(135deg, rgba(93, 242, 169, 0.16), rgba(255, 216, 107, 0.14), rgba(255, 93, 162, 0.1));
+}
+
+.backtest-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-panel {
+  align-content: start;
+}
+
+.metric-bar-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.metric-bar-row {
+  display: grid;
+  gap: 8px;
+}
+
+.metric-bar-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.metric-bar-meta span {
+  color: #53627b;
+  font-size: 0.78rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.metric-bar-meta strong {
+  color: #172036;
+  font-size: 0.96rem;
+}
+
+.metric-bar-track {
+  position: relative;
+  height: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.44)),
+    rgba(31, 45, 75, 0.06);
+}
+
+.metric-bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 3px;
+  border-radius: inherit;
+  box-shadow: 0 10px 22px rgba(47, 64, 101, 0.13);
+  transition: width 220ms ease;
+}
+
+.metric-bar-fill-buy {
+  background: linear-gradient(90deg, var(--mint), var(--turquoise));
+}
+
+.metric-bar-fill-hold {
+  background: linear-gradient(90deg, var(--yellow), #ffae42);
+}
+
+.metric-bar-fill-sell {
+  background: linear-gradient(90deg, var(--coral), var(--rose));
+}
+
+.interpretation-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.44)),
+    linear-gradient(135deg, rgba(93, 242, 169, 0.14), rgba(255, 216, 107, 0.16), rgba(255, 123, 123, 0.1));
+}
+
+.interpretation-panel > div {
+  display: grid;
+  gap: 10px;
+}
+
+.interpretation-panel .signal-badge {
+  margin: 0 4px;
+  vertical-align: middle;
 }
 
 .split-panel {
@@ -1025,6 +1182,11 @@ p {
   .advisor-kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .backtest-kpi-grid,
+  .backtest-chart-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -1053,6 +1215,11 @@ p {
   }
 
   .advisor-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .backtest-kpi-grid,
+  .backtest-chart-grid {
     grid-template-columns: 1fr;
   }
 
