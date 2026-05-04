@@ -222,3 +222,6 @@ frontend/tsconfig.tsbuildinfo
 
 # Local npm mistakes
 /package-lock.json
+
+# External report handled in Overleaf
+docs/
