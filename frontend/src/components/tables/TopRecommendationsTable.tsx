@@ -1,75 +1,59 @@
 import SignalBadge from "../ui/SignalBadge";
 import type { Recommendation } from "../../types/recommendation";
 
-type RecommendationTableProps = {
+type TopRecommendationsTableProps = {
   recommendations: Recommendation[];
+  emptyTitle: string;
+  emptyDetail: string;
+  formatPercent: (value: number | null) => string;
+  formatNumber: (value: number | null, digits?: number) => string;
 };
 
-const formatNumber = (value: number | null | undefined, digits = 3) => {
-  if (value === null || value === undefined || Number.isNaN(value)) {
-    return "N/A";
-  }
-
-  return value.toFixed(digits);
-};
-
-const formatPercent = (value: number | null | undefined) => {
-  if (value === null || value === undefined || Number.isNaN(value)) {
-    return "N/A";
-  }
-
-  return `${(value * 100).toFixed(2)}%`;
-};
-
-export default function RecommendationTable({ recommendations }: RecommendationTableProps) {
+export default function TopRecommendationsTable({
+  recommendations,
+  emptyTitle,
+  emptyDetail,
+  formatPercent,
+  formatNumber,
+}: TopRecommendationsTableProps) {
   if (recommendations.length === 0) {
     return (
       <div className="table-empty-state">
-        <strong>No recommendations available</strong>
-        <span>The API returned an empty recommendation set.</span>
+        <strong>{emptyTitle}</strong>
+        <span>{emptyDetail}</span>
       </div>
     );
   }
 
   return (
     <div className="recommendation-table-wrap">
-      <table className="recommendation-table">
+      <table className="recommendation-table top-recommendations-table">
         <thead>
           <tr>
             <th scope="col">Ticker</th>
             <th scope="col">Signal</th>
-            <th scope="col">Confidence</th>
             <th scope="col">Proba Up</th>
-            <th scope="col">Direction</th>
+            <th scope="col">Confidence</th>
             <th scope="col">Advisor Score</th>
             <th scope="col">Momentum 5</th>
-            <th scope="col">Momentum 10</th>
             <th scope="col">Rolling Vol 10</th>
-            <th scope="col">Oil Return</th>
-            <th scope="col">S&amp;P 500 Return</th>
-            <th scope="col">Nasdaq Return</th>
             <th scope="col">Explanation</th>
           </tr>
         </thead>
         <tbody>
           {recommendations.map((recommendation) => (
-            <tr key={`${recommendation.date_id}-${recommendation.ticker}`}>
+            <tr key={`top-${recommendation.signal}-${recommendation.date_id}-${recommendation.ticker}`}>
               <td data-label="Ticker">
                 <strong className="ticker-cell">{recommendation.ticker}</strong>
               </td>
               <td data-label="Signal">
                 <SignalBadge signal={recommendation.signal} />
               </td>
-              <td data-label="Confidence">{recommendation.confidence ?? "N/A"}</td>
               <td data-label="Proba Up">{formatPercent(recommendation.proba_up)}</td>
-              <td data-label="Direction">{recommendation.predicted_direction ?? "N/A"}</td>
+              <td data-label="Confidence">{recommendation.confidence ?? "N/A"}</td>
               <td data-label="Advisor Score">{formatNumber(recommendation.advisor_score)}</td>
               <td data-label="Momentum 5">{formatNumber(recommendation.momentum_5, 4)}</td>
-              <td data-label="Momentum 10">{formatNumber(recommendation.momentum_10, 4)}</td>
               <td data-label="Rolling Vol 10">{formatNumber(recommendation.rolling_vol_10, 4)}</td>
-              <td data-label="Oil Return">{formatNumber(recommendation.oil_return, 4)}</td>
-              <td data-label="S&P 500 Return">{formatNumber(recommendation.sp500_return, 4)}</td>
-              <td data-label="Nasdaq Return">{formatNumber(recommendation.nasdaq_return, 4)}</td>
               <td data-label="Explanation" className="explanation-cell">
                 <span className="table-explanation-preview" title={recommendation.explanation ?? undefined}>
                   {recommendation.explanation ?? "N/A"}
