@@ -1,20 +1,20 @@
 export type RecommendationSignal = "BUY" | "HOLD" | "SELL";
 
 export type Recommendation = {
-  date_id: string;
+  date_id: string | null;
   ticker: string;
-  proba_up: number;
-  predicted_direction: string;
+  proba_up: number | null;
+  predicted_direction: string | null;
   signal: RecommendationSignal;
-  confidence: string;
-  advisor_score: number;
-  momentum_5: number;
-  momentum_10: number;
-  rolling_vol_10: number;
-  oil_return: number;
-  sp500_return: number;
-  nasdaq_return: number;
-  explanation: string;
+  confidence: string | null;
+  advisor_score: number | null;
+  momentum_5: number | null;
+  momentum_10: number | null;
+  rolling_vol_10: number | null;
+  oil_return: number | null;
+  sp500_return: number | null;
+  nasdaq_return: number | null;
+  explanation: string | null;
 };
 
 export type RecommendationSummary = {
