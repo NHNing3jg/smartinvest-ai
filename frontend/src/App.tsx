@@ -6,6 +6,7 @@ import Sidebar from "./components/layout/Sidebar";
 import AIAdvisor from "./pages/AIAdvisor";
 import Backtest from "./pages/Backtest";
 import Dashboard from "./pages/Dashboard";
+import MarketOverview from "./pages/MarketOverview";
 import Portfolio from "./pages/Portfolio";
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         <PageContainer>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/market-overview" element={<MarketOverview />} />
             <Route path="/ai-advisor" element={<AIAdvisor />} />
             <Route path="/backtest" element={<Backtest />} />
             <Route path="/portfolio" element={<Portfolio />} />
