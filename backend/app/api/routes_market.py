@@ -68,9 +68,10 @@ def market_daily(
     ticker: str | None = None,
     start_date: date | None = None,
     end_date: date | None = None,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     try:
-        return get_market_daily(ticker, start_date, end_date)
+        data = get_market_daily(ticker, start_date, end_date)
+        return {"data": data}
     except (MarketDatabaseError, MarketDataError, MarketViewNotFoundError) as exc:
         raise _handle_market_error(exc) from exc
 
@@ -97,8 +98,9 @@ def market_returns_distribution(
     ticker: str = Query(..., min_length=1),
     start_date: date | None = None,
     end_date: date | None = None,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     try:
-        return get_returns_distribution(ticker, start_date, end_date)
+        data = get_returns_distribution(ticker, start_date, end_date)
+        return {"data": data}
     except (MarketDatabaseError, MarketDataError, MarketViewNotFoundError) as exc:
         raise _handle_market_error(exc) from exc

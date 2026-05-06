@@ -1535,7 +1535,6 @@ p {
 .market-recharts-card {
   display: grid;
   gap: 10px;
-  min-height: 420px;
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.74);
   border-radius: 8px;
@@ -1545,10 +1544,37 @@ p {
 }
 
 .market-recharts-card-compact {
-  min-height: 382px;
+  align-content: start;
+}
+
+.market-recharts-box {
+  width: 100%;
+  height: 300px;
+  min-height: 300px;
+  overflow: visible;
+}
+
+.market-recharts-box .recharts-responsive-container {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+}
+
+.market-recharts-box .recharts-responsive-container > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.market-recharts-box-large {
+  height: 420px;
+  min-height: 420px;
 }
 
 .market-recharts-card .recharts-wrapper {
+  display: flex !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  width: auto !important;
   max-width: 100%;
 }
 
@@ -1564,6 +1590,14 @@ p {
   justify-content: center;
   gap: 14px;
   flex-wrap: wrap;
+}
+
+.market-recharts-card .recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.market-recharts-card .recharts-cartesian-grid line {
+  stroke-linecap: round;
 }
 
 .market-svg-chart {

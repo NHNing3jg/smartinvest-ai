@@ -13,14 +13,12 @@ import {
   Waves,
 } from "lucide-react";
 import {
-  Area,
   Bar,
   BarChart as RechartsBarChart,
   CartesianGrid,
-  Cell,
-  ComposedChart,
   Legend,
   Line,
+  LineChart as RechartsLineChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -35,24 +33,22 @@ import Loader from "../components/ui/Loader";
 import type { MarketDailyRow, MarketReturnRow, MarketSummary } from "../types/market";
 
 type ReturnBin = {
-  label: string;
+  range: string;
   count: number;
   start: number;
   end: number;
-  fill: string;
 };
 
-type MarketChartPoint = {
-  date_id: string;
-  dateLabel: string;
-  close: number | null;
+type PriceChartPoint = {
+  date: string;
+  close: number;
   ma20: number | null;
   ma50: number | null;
-  volume: number | null;
 };
 
-type ReturnChartBin = ReturnBin & {
-  interval: string;
+type VolumeChartPoint = {
+  date: string;
+  volume: number;
 };
 
 const DEFAULT_TABLE_LIMIT = 15;
@@ -285,14 +281,16 @@ const downsampleRows = <T,>(rows: T[], maxPoints: number) => {
 
 const getLatestRows = (rows: MarketDailyRow[], limit: number) => sortDailyRowsDesc(rows).slice(0, limit);
 
-const computeMovingAverage = (rows: MarketDailyRow[], windowSize: number) =>
-  rows.map((row, index) => {
+const toChartNumber = (value: number | null) => (value === null ? Number.NaN : Number(value));
+
+const computeMovingAverage = (rows: Array<{ close: number }>, windowSize: number) =>
+  rows.map((_, index) => {
     if (index + 1 < windowSize) {
       return null;
     }
 
     const windowRows = rows.slice(index + 1 - windowSize, index + 1);
-    const closeValues = windowRows.map((windowRow) => windowRow.close).filter((value): value is number => value !== null);
+    const closeValues = windowRows.map((windowRow) => windowRow.close);
 
     if (closeValues.length !== windowSize) {
       return null;
@@ -301,23 +299,36 @@ const computeMovingAverage = (rows: MarketDailyRow[], windowSize: number) =>
     return closeValues.reduce((total, value) => total + value, 0) / windowSize;
   });
 
-const buildMarketChartPoints = (rows: MarketDailyRow[]): MarketChartPoint[] => {
-  const sortedRows = sortDailyRowsAsc(rows);
+const buildPriceChartData = (rows: MarketDailyRow[]): PriceChartPoint[] => {
+  const sortedRows = sortDailyRowsAsc(rows)
+    .map((row) => ({
+      date: row.date_id,
+      close: toChartNumber(row.close),
+    }))
+    .filter((row) => Number.isFinite(row.close));
   const ma20Values = computeMovingAverage(sortedRows, 20);
   const ma50Values = computeMovingAverage(sortedRows, 50);
 
   return sortedRows.map((row, index) => ({
-    date_id: row.date_id,
-    dateLabel: formatDateLabel(row.date_id),
+    date: row.date,
     close: row.close,
     ma20: ma20Values[index],
     ma50: ma50Values[index],
-    volume: row.volume,
   }));
 };
 
+const buildVolumeChartData = (rows: MarketDailyRow[]): VolumeChartPoint[] =>
+  sortDailyRowsAsc(rows)
+    .map((row) => ({
+      date: row.date_id,
+      volume: toChartNumber(row.volume),
+    }))
+    .filter((row) => Number.isFinite(row.volume));
+
 const buildReturnBins = (rows: MarketReturnRow[], binCount = 7): ReturnBin[] => {
-  const returns = rows.map((row) => row.daily_return_pct).filter((value): value is number => value !== null);
+  const returns = rows
+    .map((row) => toChartNumber(row.daily_return_pct))
+    .filter((value) => Number.isFinite(value));
 
   if (returns.length === 0) {
     return [];
@@ -330,11 +341,10 @@ const buildReturnBins = (rows: MarketReturnRow[], binCount = 7): ReturnBin[] => 
   if (range === 0) {
     return [
       {
-        label: `${minReturn.toFixed(2)}%`,
+        range: `${minReturn.toFixed(2)}%`,
         count: returns.length,
         start: minReturn,
         end: maxReturn,
-        fill: minReturn < 0 ? "#ff7b7b" : minReturn > 0 ? "#12d6c5" : "#ffd86b",
       },
     ];
   }
@@ -344,11 +354,10 @@ const buildReturnBins = (rows: MarketReturnRow[], binCount = 7): ReturnBin[] => 
     const start = minReturn + index * step;
     const end = index === binCount - 1 ? maxReturn : start + step;
     return {
-      label: `${start.toFixed(1)}% to ${end.toFixed(1)}%`,
+      range: `${start.toFixed(1)}% to ${end.toFixed(1)}%`,
       count: 0,
       start,
       end,
-      fill: end < 0 ? "#ff7b7b" : start > 0 ? "#12d6c5" : "#ffd86b",
     };
   });
 
@@ -359,12 +368,6 @@ const buildReturnBins = (rows: MarketReturnRow[], binCount = 7): ReturnBin[] => 
 
   return bins;
 };
-
-const buildReturnChartBins = (rows: MarketReturnRow[]) =>
-  buildReturnBins(rows, 9).map((bin) => ({
-    ...bin,
-    interval: bin.label,
-  })) satisfies ReturnChartBin[];
 
 export default function MarketOverview() {
   const [tickers, setTickers] = useState<string[]>([]);
@@ -409,10 +412,12 @@ export default function MarketOverview() {
     setIsMarketLoading(true);
     setErrorMessage(null);
 
+    const trimmedStartDate = startDate.trim();
+    const trimmedEndDate = endDate.trim();
     const params = {
       ticker: selectedTicker,
-      ...(startDate ? { start_date: startDate } : {}),
-      ...(endDate ? { end_date: endDate } : {}),
+      ...(trimmedStartDate ? { start_date: trimmedStartDate } : {}),
+      ...(trimmedEndDate ? { end_date: trimmedEndDate } : {}),
     };
 
     try {
@@ -421,6 +426,10 @@ export default function MarketOverview() {
         apiClient.get<unknown>("/api/market/daily", { params }),
         apiClient.get<unknown>("/api/market/returns-distribution", { params }),
       ]);
+
+      console.log("Summary response:", summaryResponse.data);
+      console.log("Daily response:", dailyResponse.data);
+      console.log("Returns response:", returnsResponse.data);
 
       setSummary(normalizeSummary(summaryResponse.data));
       setDailyRows(normalizeDailyRows(dailyResponse.data));
@@ -448,19 +457,27 @@ export default function MarketOverview() {
   const sortedDailyRows = useMemo(() => sortDailyRowsDesc(dailyRows), [dailyRows]);
   const tableLimit = isTableExpanded ? EXPANDED_TABLE_LIMIT : DEFAULT_TABLE_LIMIT;
   const tableRows = useMemo(() => getLatestRows(dailyRows, tableLimit), [dailyRows, tableLimit]);
-  const chartData = useMemo(
-    () => downsampleRows(buildMarketChartPoints(dailyRows), PRICE_POINT_LIMIT),
-    [dailyRows],
-  );
-  const volumeChartData = useMemo(
-    () => downsampleRows(buildMarketChartPoints(dailyRows).slice(-VOLUME_POINT_LIMIT), VOLUME_POINT_LIMIT),
-    [dailyRows],
-  );
+  const priceChartData = useMemo(() => {
+    const data = downsampleRows(buildPriceChartData(dailyRows), PRICE_POINT_LIMIT);
+    console.log("Daily rows:", dailyRows.length, dailyRows.slice(0, 3));
+    console.log("Price chart data:", data.length, data.slice(0, 3));
+    return data;
+  }, [dailyRows]);
+  const volumeChartData = useMemo(() => {
+    const data = downsampleRows(buildVolumeChartData(dailyRows).slice(-VOLUME_POINT_LIMIT), VOLUME_POINT_LIMIT);
+    console.log("Volume chart data:", data.length, data.slice(0, 3));
+    return data;
+  }, [dailyRows]);
   const averageVolume = useMemo(() => {
-    const values = volumeChartData.map((row) => row.volume).filter((value): value is number => value !== null);
+    const values = volumeChartData.map((row) => row.volume);
     return values.length > 0 ? values.reduce((total, value) => total + value, 0) / values.length : null;
   }, [volumeChartData]);
-  const returnChartBins = useMemo(() => buildReturnChartBins(returnRows), [returnRows]);
+  const returnBins = useMemo(() => {
+    const bins = buildReturnBins(returnRows, 9);
+    console.log("Return rows:", returnRows.length, returnRows.slice(0, 3));
+    console.log("Return bins:", bins.length, bins);
+    return bins;
+  }, [returnRows]);
   const canToggleTable = sortedDailyRows.length > DEFAULT_TABLE_LIMIT;
 
   return (
@@ -577,93 +594,85 @@ export default function MarketOverview() {
                   <h2>Price Evolution with Moving Averages</h2>
                 </div>
               </div>
-              {chartData.some((row) => row.close !== null) ? (
+              {priceChartData.length > 0 ? (
                 <div className="market-recharts-card">
-                  <ResponsiveContainer width="100%" height={390}>
-                    <ComposedChart data={chartData} margin={{ top: 18, right: 22, left: 10, bottom: 12 }}>
-                      <defs>
-                        <linearGradient id="marketCloseArea" x1="0" x2="0" y1="0" y2="1">
-                          <stop offset="0%" stopColor="#12d6c5" stopOpacity={0.34} />
-                          <stop offset="100%" stopColor="#277dff" stopOpacity={0.04} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid stroke="rgba(83, 98, 123, 0.18)" strokeDasharray="3 4" vertical={false} />
-                      <XAxis
-                        dataKey="date_id"
-                        minTickGap={30}
-                        tickFormatter={formatDateLabel}
-                        tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
-                        axisLine={{ stroke: "rgba(83, 98, 123, 0.22)" }}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        width={72}
-                        domain={["auto", "auto"]}
-                        tickFormatter={(value) => formatCurrency(Number(value))}
-                        tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <Tooltip
-                        cursor={{ stroke: "rgba(39, 125, 255, 0.24)", strokeWidth: 1 }}
-                        contentStyle={{
-                          border: "1px solid rgba(255, 255, 255, 0.82)",
-                          borderRadius: 8,
-                          background: "rgba(255, 255, 255, 0.94)",
-                          boxShadow: "0 18px 36px rgba(47, 64, 101, 0.14)",
-                        }}
-                        formatter={(value, name) => [
-                          formatCurrency(Number(value)),
-                          name === "ma20" ? "MA20" : name === "ma50" ? "MA50" : "Close",
-                        ]}
-                        labelFormatter={(label) => `Date: ${formatDateLabel(String(label))}`}
-                      />
-                      <Legend wrapperStyle={{ color: "#53627b", fontWeight: 800, paddingTop: 8 }} />
-                      {summary?.last_close !== null && summary?.last_close !== undefined && (
-                        <ReferenceLine
-                          y={summary.last_close}
-                          stroke="#ff5da2"
-                          strokeDasharray="4 5"
-                          ifOverflow="extendDomain"
+                  <div className="market-recharts-box market-recharts-box-large">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsLineChart data={priceChartData} margin={{ top: 18, right: 22, left: 10, bottom: 12 }}>
+                        <CartesianGrid stroke="rgba(83, 98, 123, 0.18)" strokeDasharray="3 4" vertical={false} />
+                        <XAxis
+                          dataKey="date"
+                          minTickGap={30}
+                          tickFormatter={formatDateLabel}
+                          tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
+                          axisLine={{ stroke: "rgba(83, 98, 123, 0.22)" }}
+                          tickLine={false}
                         />
-                      )}
-                      <Area
-                        type="monotone"
-                        dataKey="close"
-                        name="Close"
-                        fill="url(#marketCloseArea)"
-                        stroke="#277dff"
-                        strokeWidth={2.8}
-                        dot={false}
-                        activeDot={{ r: 4, strokeWidth: 2, stroke: "#ffffff" }}
-                        connectNulls
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="ma20"
-                        name="MA20"
-                        stroke="#12d6c5"
-                        strokeWidth={2}
-                        strokeDasharray="7 5"
-                        dot={false}
-                        connectNulls
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="ma50"
-                        name="MA50"
-                        stroke="#ff7b7b"
-                        strokeWidth={2}
-                        strokeDasharray="4 6"
-                        dot={false}
-                        connectNulls
-                      />
-                    </ComposedChart>
-                  </ResponsiveContainer>
+                        <YAxis
+                          width={72}
+                          domain={["auto", "auto"]}
+                          tickFormatter={(value) => formatCurrency(Number(value))}
+                          tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip
+                          cursor={{ stroke: "rgba(39, 125, 255, 0.24)", strokeWidth: 1 }}
+                          contentStyle={{
+                            border: "1px solid rgba(255, 255, 255, 0.82)",
+                            borderRadius: 8,
+                            background: "rgba(255, 255, 255, 0.94)",
+                            boxShadow: "0 18px 36px rgba(47, 64, 101, 0.14)",
+                          }}
+                          formatter={(value, name) => [
+                            formatCurrency(Number(value)),
+                            name === "ma20" ? "MA20" : name === "ma50" ? "MA50" : "Close",
+                          ]}
+                          labelFormatter={(label) => `Date: ${formatDateLabel(String(label))}`}
+                        />
+                        <Legend wrapperStyle={{ color: "#53627b", fontWeight: 800, paddingTop: 8 }} />
+                        {summary?.last_close !== null && summary?.last_close !== undefined && (
+                          <ReferenceLine
+                            y={summary.last_close}
+                            stroke="#ff5da2"
+                            strokeDasharray="4 5"
+                            ifOverflow="extendDomain"
+                          />
+                        )}
+                        <Line
+                          type="monotone"
+                          dataKey="close"
+                          name="Close"
+                          stroke="#277dff"
+                          strokeWidth={2.5}
+                          dot={false}
+                          activeDot={{ r: 4, strokeWidth: 2, stroke: "#ffffff" }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="ma20"
+                          name="MA20"
+                          stroke="#12d6c5"
+                          strokeWidth={2.25}
+                          dot={false}
+                          connectNulls
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="ma50"
+                          name="MA50"
+                          stroke="#ff7b7b"
+                          strokeWidth={2.25}
+                          dot={false}
+                          connectNulls
+                        />
+                      </RechartsLineChart>
+                    </ResponsiveContainer>
+                  </div>
                   <div className="market-chart-caption">
-                    <span>{formatDateLabel(chartData[0]?.date_id)}</span>
+                    <span>{formatDateLabel(priceChartData[0]?.date)}</span>
                     <strong>{selectedTicker}</strong>
-                    <span>{formatDateLabel(chartData[chartData.length - 1]?.date_id)}</span>
+                    <span>{formatDateLabel(priceChartData[priceChartData.length - 1]?.date)}</span>
                   </div>
                 </div>
               ) : (
@@ -681,49 +690,51 @@ export default function MarketOverview() {
                   <h2>Volume by Date</h2>
                 </div>
               </div>
-              {volumeChartData.some((row) => row.volume !== null) ? (
+              {volumeChartData.length > 0 ? (
                 <div className="market-recharts-card market-recharts-card-compact">
                   <p className="market-chart-helper">Average volume in view: {formatCompactNumber(averageVolume)}</p>
-                  <ResponsiveContainer width="100%" height={320}>
-                    <RechartsBarChart data={volumeChartData} margin={{ top: 12, right: 18, left: 4, bottom: 8 }}>
-                      <CartesianGrid stroke="rgba(83, 98, 123, 0.16)" strokeDasharray="3 4" vertical={false} />
-                      <XAxis
-                        dataKey="date_id"
-                        minTickGap={28}
-                        tickFormatter={formatDateLabel}
-                        tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
-                        axisLine={{ stroke: "rgba(83, 98, 123, 0.22)" }}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        width={58}
-                        tickFormatter={(value) => formatCompactNumber(Number(value))}
-                        tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <Tooltip
-                        cursor={{ fill: "rgba(18, 214, 197, 0.08)" }}
-                        contentStyle={{
-                          border: "1px solid rgba(255, 255, 255, 0.82)",
-                          borderRadius: 8,
-                          background: "rgba(255, 255, 255, 0.94)",
-                          boxShadow: "0 18px 36px rgba(47, 64, 101, 0.14)",
-                        }}
-                        formatter={(value) => [formatCompactNumber(Number(value)), "Volume"]}
-                        labelFormatter={(label) => `Date: ${formatDateLabel(String(label))}`}
-                      />
-                      {averageVolume !== null && (
-                        <ReferenceLine
-                          y={averageVolume}
-                          stroke="#ff5da2"
-                          strokeDasharray="4 5"
-                          label={{ value: "Avg", fill: "#9b4b6e", fontSize: 11, fontWeight: 800 }}
+                  <div className="market-recharts-box">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsBarChart data={volumeChartData} margin={{ top: 12, right: 18, left: 4, bottom: 8 }}>
+                        <CartesianGrid stroke="rgba(83, 98, 123, 0.16)" strokeDasharray="3 4" vertical={false} />
+                        <XAxis
+                          dataKey="date"
+                          minTickGap={28}
+                          tickFormatter={formatDateLabel}
+                          tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
+                          axisLine={{ stroke: "rgba(83, 98, 123, 0.22)" }}
+                          tickLine={false}
                         />
-                      )}
-                      <Bar dataKey="volume" name="Volume" fill="#12d6c5" radius={[5, 5, 0, 0]} maxBarSize={18} />
-                    </RechartsBarChart>
-                  </ResponsiveContainer>
+                        <YAxis
+                          width={58}
+                          tickFormatter={(value) => formatCompactNumber(Number(value))}
+                          tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip
+                          cursor={{ fill: "rgba(18, 214, 197, 0.08)" }}
+                          contentStyle={{
+                            border: "1px solid rgba(255, 255, 255, 0.82)",
+                            borderRadius: 8,
+                            background: "rgba(255, 255, 255, 0.94)",
+                            boxShadow: "0 18px 36px rgba(47, 64, 101, 0.14)",
+                          }}
+                          formatter={(value) => [formatCompactNumber(Number(value)), "Volume"]}
+                          labelFormatter={(label) => `Date: ${formatDateLabel(String(label))}`}
+                        />
+                        {averageVolume !== null && (
+                          <ReferenceLine
+                            y={averageVolume}
+                            stroke="#ff5da2"
+                            strokeDasharray="4 5"
+                            label={{ value: "Avg", fill: "#9b4b6e", fontSize: 11, fontWeight: 800 }}
+                          />
+                        )}
+                        <Bar dataKey="volume" name="Volume" fill="#12d6c5" radius={[5, 5, 0, 0]} maxBarSize={18} />
+                      </RechartsBarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               ) : (
                 <div className="table-empty-state">
@@ -740,50 +751,47 @@ export default function MarketOverview() {
                   <h2>Daily Return Distribution</h2>
                 </div>
               </div>
-              {returnChartBins.length > 0 ? (
+              {returnBins.length > 0 ? (
                 <div className="market-recharts-card market-recharts-card-compact">
                   <p className="market-chart-helper">
                     Distribution of daily returns across the selected period.
                   </p>
-                  <ResponsiveContainer width="100%" height={320}>
-                    <RechartsBarChart data={returnChartBins} margin={{ top: 12, right: 18, left: 4, bottom: 8 }}>
-                      <CartesianGrid stroke="rgba(83, 98, 123, 0.16)" strokeDasharray="3 4" vertical={false} />
-                      <XAxis
-                        dataKey="interval"
-                        interval={0}
-                        angle={-18}
-                        textAnchor="end"
-                        height={64}
-                        tick={{ fill: "#66738c", fontSize: 11, fontWeight: 700 }}
-                        axisLine={{ stroke: "rgba(83, 98, 123, 0.22)" }}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        width={44}
-                        allowDecimals={false}
-                        tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <Tooltip
-                        cursor={{ fill: "rgba(255, 216, 107, 0.12)" }}
-                        contentStyle={{
-                          border: "1px solid rgba(255, 255, 255, 0.82)",
-                          borderRadius: 8,
-                          background: "rgba(255, 255, 255, 0.94)",
-                          boxShadow: "0 18px 36px rgba(47, 64, 101, 0.14)",
-                        }}
-                        formatter={(value) => [Number(value).toLocaleString(), "Sessions"]}
-                        labelFormatter={(label) => `Return interval: ${label}`}
-                      />
-                      <ReferenceLine y={0} stroke="rgba(83, 98, 123, 0.24)" />
-                      <Bar dataKey="count" name="Sessions" radius={[5, 5, 0, 0]} maxBarSize={44}>
-                        {returnChartBins.map((bin) => (
-                          <Cell key={`${bin.interval}-${bin.count}`} fill={bin.fill} />
-                        ))}
-                      </Bar>
-                    </RechartsBarChart>
-                  </ResponsiveContainer>
+                  <div className="market-recharts-box">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsBarChart data={returnBins} margin={{ top: 12, right: 18, left: 4, bottom: 8 }}>
+                        <CartesianGrid stroke="rgba(83, 98, 123, 0.16)" strokeDasharray="3 4" vertical={false} />
+                        <XAxis
+                          dataKey="range"
+                          interval={0}
+                          angle={-18}
+                          textAnchor="end"
+                          height={64}
+                          tick={{ fill: "#66738c", fontSize: 11, fontWeight: 700 }}
+                          axisLine={{ stroke: "rgba(83, 98, 123, 0.22)" }}
+                          tickLine={false}
+                        />
+                        <YAxis
+                          width={44}
+                          allowDecimals={false}
+                          tick={{ fill: "#66738c", fontSize: 12, fontWeight: 700 }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip
+                          cursor={{ fill: "rgba(255, 216, 107, 0.12)" }}
+                          contentStyle={{
+                            border: "1px solid rgba(255, 255, 255, 0.82)",
+                            borderRadius: 8,
+                            background: "rgba(255, 255, 255, 0.94)",
+                            boxShadow: "0 18px 36px rgba(47, 64, 101, 0.14)",
+                          }}
+                          formatter={(value) => [Number(value).toLocaleString(), "Sessions"]}
+                          labelFormatter={(label) => `Return interval: ${label}`}
+                        />
+                        <Bar dataKey="count" name="Sessions" fill="#277dff" radius={[5, 5, 0, 0]} maxBarSize={44} />
+                      </RechartsBarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               ) : (
                 <div className="table-empty-state">
