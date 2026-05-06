@@ -5,6 +5,7 @@ from app.api.routes_backtest import router as backtest_router
 from app.api.routes_health import router as health_router
 from app.api.routes_macro import router as macro_router
 from app.api.routes_market import router as market_router
+from app.api.routes_performance import router as performance_router
 from app.api.routes_portfolio import router as portfolio_router
 from app.api.routes_recommendations import router as recommendations_router
 
@@ -25,3 +26,4 @@ app.include_router(backtest_router, prefix="/api")
 app.include_router(portfolio_router, prefix="/api")
 app.include_router(market_router, prefix="/api/market")
 app.include_router(macro_router, prefix="/api/macro")
+app.include_router(performance_router, prefix="/api/performance")
