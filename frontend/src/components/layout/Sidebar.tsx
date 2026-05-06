@@ -1,8 +1,9 @@
-import { Brain, ChartNoAxesCombined, LayoutDashboard, WalletCards } from "lucide-react";
+import { Brain, ChartNoAxesCombined, LayoutDashboard, LineChart, WalletCards } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const navItems = [
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
+  { label: "Market Overview", path: "/market-overview", icon: LineChart },
   { label: "AI Advisor", path: "/ai-advisor", icon: Brain },
   { label: "Backtest", path: "/backtest", icon: ChartNoAxesCombined },
   { label: "Portfolio", path: "/portfolio", icon: WalletCards },
