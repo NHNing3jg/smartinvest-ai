@@ -1,6 +1,6 @@
 from datetime import date
 from decimal import Decimal
-from statistics import stdev
+from math import isfinite, sqrt
 from typing import Any
 
 from sqlalchemy import text
@@ -41,10 +41,54 @@ def _json_safe(value: Any) -> Any:
     if value is None:
         return None
     if isinstance(value, Decimal):
-        return float(value)
+        return _finite_float_or_none(value)
+    if isinstance(value, float):
+        return value if isfinite(value) else None
     if hasattr(value, "isoformat"):
         return value.isoformat()
     return value
+
+
+def _finite_float_or_none(value: Any) -> float | None:
+    if value is None:
+        return None
+
+    try:
+        numeric_value = float(value)
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+    if not isfinite(numeric_value):
+        return None
+
+    return numeric_value
+
+
+def safe_sample_std(values: list[Any]) -> float | None:
+    finite_values = [
+        numeric_value
+        for value in values
+        if (numeric_value := _finite_float_or_none(value)) is not None
+    ]
+    count = len(finite_values)
+    if count < 2:
+        return None
+
+    try:
+        mean_value = sum(finite_values) / count
+        variance = (
+            sum((value - mean_value) ** 2 for value in finite_values) / (count - 1)
+        )
+        return _finite_float_or_none(sqrt(variance))
+    except (OverflowError, ValueError):
+        return None
+
+
+def _percent_change(change: float | None, base: float | None) -> float | None:
+    if change is None or base in (None, 0):
+        return None
+
+    return _finite_float_or_none((change / base) * 100)
 
 
 def _record_from_row(row: Any) -> dict[str, Any]:
@@ -164,7 +208,11 @@ def get_macro_summary(
     if not rows:
         raise MacroNoDataError(f"No macro data found for series_id '{series_id}'.")
 
-    values = [row["value"] for row in rows if row["value"] is not None]
+    values = [
+        numeric_value
+        for row in rows
+        if (numeric_value := _finite_float_or_none(row["value"])) is not None
+    ]
     if not values:
         raise MacroNoDataError(
             f"No numeric macro observations found for series_id '{series_id}'."
@@ -177,14 +225,11 @@ def get_macro_summary(
     absolute_change = None
     percent_change = None
     if previous_value is not None:
-        absolute_change = latest_value - previous_value
-        if previous_value != 0:
-            percent_change = (absolute_change / previous_value) * 100
+        absolute_change = _finite_float_or_none(latest_value - previous_value)
+        percent_change = _percent_change(absolute_change, previous_value)
 
-    period_change = latest_value - first_value
-    period_change_pct = None
-    if first_value != 0:
-        period_change_pct = (period_change / first_value) * 100
+    period_change = _finite_float_or_none(latest_value - first_value)
+    period_change_pct = _percent_change(period_change, first_value)
 
     return {
         "series_id": rows[-1]["series_id"],
@@ -198,8 +243,8 @@ def get_macro_summary(
         "percent_change": percent_change,
         "period_change": period_change,
         "period_change_pct": period_change_pct,
-        "period_mean": sum(values) / len(values),
-        "period_std": stdev(values) if len(values) > 1 else None,
+        "period_mean": _finite_float_or_none(sum(values) / len(values)),
+        "period_std": safe_sample_std(values),
         "period_min": min(values),
         "period_max": max(values),
     }
