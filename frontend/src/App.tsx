@@ -6,6 +6,7 @@ import Sidebar from "./components/layout/Sidebar";
 import AIAdvisor from "./pages/AIAdvisor";
 import Backtest from "./pages/Backtest";
 import Dashboard from "./pages/Dashboard";
+import EnergyMarket from "./pages/EnergyMarket";
 import MacroAnalysis from "./pages/MacroAnalysis";
 import MarketOverview from "./pages/MarketOverview";
 import PerformanceAnalysis from "./pages/PerformanceAnalysis";
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/market-overview" element={<MarketOverview />} />
             <Route path="/macro-analysis" element={<MacroAnalysis />} />
             <Route path="/performance-analysis" element={<PerformanceAnalysis />} />
+            <Route path="/energy-market" element={<EnergyMarket />} />
             <Route path="/ai-advisor" element={<AIAdvisor />} />
             <Route path="/backtest" element={<Backtest />} />
             <Route path="/portfolio" element={<Portfolio />} />

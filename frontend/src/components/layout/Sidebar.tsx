@@ -1,4 +1,4 @@
-import { Activity, Brain, ChartNoAxesCombined, Globe2, LayoutDashboard, LineChart, WalletCards } from "lucide-react";
+import { Activity, Brain, ChartNoAxesCombined, Droplets, Globe2, LayoutDashboard, LineChart, WalletCards } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const navItems = [
@@ -6,6 +6,7 @@ const navItems = [
   { label: "Market Overview", path: "/market-overview", icon: LineChart },
   { label: "Macro Analysis", path: "/macro-analysis", icon: Globe2 },
   { label: "Performance Analysis", path: "/performance-analysis", icon: Activity },
+  { label: "Energy Market", path: "/energy-market", icon: Droplets },
   { label: "AI Advisor", path: "/ai-advisor", icon: Brain },
   { label: "Backtest", path: "/backtest", icon: ChartNoAxesCombined },
   { label: "Portfolio", path: "/portfolio", icon: WalletCards },
