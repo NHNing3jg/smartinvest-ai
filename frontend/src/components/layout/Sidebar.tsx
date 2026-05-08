@@ -34,7 +34,7 @@ export default function Sidebar() {
         </div>
         <div>
           <strong>SmartInvest</strong>
-          <span>AI Innovation Lab</span>
+          <span>Trading Cockpit</span>
         </div>
       </div>
 

@@ -879,7 +879,7 @@ export default function Dashboard() {
               <span className="eyebrow">Portfolio Snapshot</span>
               <h2>Top Holdings by Weight</h2>
               <p className="dashboard-panel-note">
-                Expected return {formatSignedPercent(data.portfolioSummary?.expected_return ?? null)} · Risk level{" "}
+                Expected return {formatSignedPercent(data.portfolioSummary?.expected_return ?? null)} | Risk level{" "}
                 {data.portfolioSummary?.risk_level ?? "N/A"}
               </p>
             </div>
