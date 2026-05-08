@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import EnergyMarket from "./pages/EnergyMarket";
 import MacroAnalysis from "./pages/MacroAnalysis";
 import MarketOverview from "./pages/MarketOverview";
+import PlatformConcept from "./pages/PlatformConcept";
 import PerformanceAnalysis from "./pages/PerformanceAnalysis";
 import Portfolio from "./pages/Portfolio";
 
@@ -21,6 +22,7 @@ export default function App() {
         <PageContainer>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/platform-concept" element={<PlatformConcept />} />
             <Route path="/market-overview" element={<MarketOverview />} />
             <Route path="/macro-analysis" element={<MacroAnalysis />} />
             <Route path="/performance-analysis" element={<PerformanceAnalysis />} />
