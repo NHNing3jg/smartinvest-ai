@@ -1,8 +1,21 @@
-import { Activity, Brain, ChartNoAxesCombined, Droplets, Globe2, LayoutDashboard, LineChart, WalletCards } from "lucide-react";
+import {
+  Activity,
+  Brain,
+  ChartNoAxesCombined,
+  Droplets,
+  Globe2,
+  LayoutDashboard,
+  Layers3,
+  LineChart,
+  WalletCards,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
+
+import smartInvestLogo from "../../assets/smartinvest-logo.png";
 
 const navItems = [
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
+  { label: "Platform Concept", path: "/platform-concept", icon: Layers3 },
   { label: "Market Overview", path: "/market-overview", icon: LineChart },
   { label: "Macro Analysis", path: "/macro-analysis", icon: Globe2 },
   { label: "Performance Analysis", path: "/performance-analysis", icon: Activity },
@@ -16,7 +29,9 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="brand-block">
-        <div className="brand-mark">SI</div>
+        <div className="brand-mark">
+          <img src={smartInvestLogo} alt="SmartInvest AI logo" />
+        </div>
         <div>
           <strong>SmartInvest</strong>
           <span>AI Innovation Lab</span>
@@ -39,11 +54,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      <div className="sidebar-note">
-        <span>BI + AI</span>
-        <strong>Student fintech studio</strong>
-      </div>
     </aside>
   );
 }

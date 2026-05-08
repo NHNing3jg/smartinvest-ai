@@ -12,7 +12,6 @@ export default function Header() {
         <button className="icon-button" type="button" aria-label="Notifications">
           <Bell size={18} />
         </button>
-        <div className="user-chip">Competition Mode</div>
       </div>
     </header>
   );
