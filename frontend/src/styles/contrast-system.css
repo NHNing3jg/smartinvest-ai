@@ -1,0 +1,402 @@
+/* Step 15E: Global contrast system */
+:root {
+  --app-bg: #071525;
+  --surface-dark: rgba(8, 24, 42, 0.96);
+  --surface-dark-2: rgba(13, 32, 52, 0.94);
+  --surface-light: rgba(245, 250, 251, 0.98);
+  --surface-light-strong: rgba(255, 255, 252, 0.99);
+  --text-primary: #f5fbff;
+  --text-secondary: #c8dceb;
+  --text-soft: #9fb4ca;
+  --text-dark: #0a1727;
+  --text-muted-dark: #304760;
+  --text-soft-dark: #536a83;
+  --border-soft: rgba(35, 73, 103, 0.2);
+  --border-strong: rgba(159, 232, 112, 0.24);
+  --accent-mint: #9fe870;
+  --accent-cyan: #38c8ff;
+  --accent-blue: #277dff;
+  --accent-purple: #a88bff;
+  --accent-yellow: #ffd86b;
+  --accent-coral: #ff6f86;
+  --positive: #16876a;
+  --warning: #9a6500;
+  --negative: #c83452;
+}
+
+body {
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(159, 232, 112, 0.17), transparent 28%),
+    radial-gradient(circle at 82% 8%, rgba(56, 200, 255, 0.18), transparent 30%),
+    radial-gradient(circle at 70% 82%, rgba(168, 139, 255, 0.13), transparent 34%),
+    linear-gradient(135deg, var(--app-bg) 0%, #0a1d31 42%, #102a43 72%, #0c2338 100%);
+}
+
+/* Dark structural surfaces */
+:where(.sidebar, .topbar, .page-hero, .hero-card, .search-shell, .topbar-context, .nav-link) {
+  border-color: var(--border-strong);
+  background:
+    linear-gradient(135deg, var(--surface-dark), var(--surface-dark-2)),
+    radial-gradient(circle at 16% 10%, rgba(159, 232, 112, 0.12), transparent 34%),
+    radial-gradient(circle at 84% 24%, rgba(56, 200, 255, 0.1), transparent 38%);
+  color: var(--text-primary);
+}
+
+:where(.sidebar, .topbar, .page-hero, .hero-card, .search-shell, .topbar-context, .nav-link) :where(h1, h2, h3, strong) {
+  color: var(--text-primary);
+}
+
+:where(.sidebar, .topbar, .page-hero, .hero-card, .search-shell, .topbar-context, .nav-link) :where(p, span, em) {
+  color: var(--text-secondary);
+}
+
+.page-hero .eyebrow,
+.sidebar .brand-block span,
+.topbar-context span {
+  color: #dfffad;
+}
+
+/* Content panel contrast normalization */
+:where(
+  .content-panel,
+  .compact-panel,
+  .dashboard-status-card,
+  .dashboard-module-card,
+  .dashboard-pipeline-step,
+  .dashboard-recommendation-card,
+  .performance-ranking-panel,
+  .performance-ranking-row,
+  .advisor-chart-panel,
+  .advisor-explanation-card,
+  .signal-distribution-card,
+  .allocation-panel,
+  .allocation-donut-panel,
+  .allocation-explanation-card,
+  .energy-regression-card,
+  .energy-regression-grid div,
+  .portfolio-donut-legend-row,
+  .table-empty-state
+) {
+  border-color: var(--border-soft);
+  background:
+    linear-gradient(135deg, var(--surface-light-strong), rgba(226, 240, 247, 0.96)),
+    linear-gradient(135deg, rgba(159, 232, 112, 0.1), rgba(56, 200, 255, 0.08));
+  box-shadow:
+    0 22px 48px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+  color: var(--text-dark);
+}
+
+:where(
+  .content-panel,
+  .compact-panel,
+  .dashboard-status-card,
+  .dashboard-module-card,
+  .dashboard-pipeline-step,
+  .dashboard-recommendation-card,
+  .performance-ranking-panel,
+  .performance-ranking-row,
+  .advisor-chart-panel,
+  .advisor-explanation-card,
+  .signal-distribution-card,
+  .allocation-panel,
+  .allocation-donut-panel,
+  .allocation-explanation-card,
+  .energy-regression-card,
+  .energy-regression-grid div,
+  .portfolio-donut-legend-row,
+  .table-empty-state
+) :where(h2, h3, strong, dt, dd, b, .ticker-cell) {
+  color: var(--text-dark);
+}
+
+:where(
+  .content-panel,
+  .compact-panel,
+  .dashboard-status-card,
+  .dashboard-module-card,
+  .dashboard-pipeline-step,
+  .dashboard-recommendation-card,
+  .performance-ranking-panel,
+  .performance-ranking-row,
+  .advisor-chart-panel,
+  .advisor-explanation-card,
+  .signal-distribution-card,
+  .allocation-panel,
+  .allocation-donut-panel,
+  .allocation-explanation-card,
+  .energy-regression-card,
+  .energy-regression-grid div,
+  .portfolio-donut-legend-row,
+  .table-empty-state
+) :where(p, li, em, small, .dashboard-panel-note, .table-explanation-preview, .explanation-cell) {
+  color: var(--text-muted-dark);
+}
+
+:where(.content-panel, .compact-panel, .dashboard-status-card, .advisor-chart-panel) :where(.eyebrow, .kpi-card-header, .advisor-filter-field span, .metric-bar-meta span, .advisor-metric-bar-meta span, .allocation-bar-meta span) {
+  color: #24435f;
+}
+
+:where(.content-panel, .compact-panel, .dashboard-status-card, .advisor-chart-panel) .eyebrow {
+  border-color: rgba(11, 73, 58, 0.18);
+  background: rgba(159, 232, 112, 0.24);
+  color: #11382f;
+}
+
+/* KPI contrast normalization */
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) {
+  border-color: rgba(24, 70, 93, 0.22);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 252, 0.99), rgba(222, 238, 247, 0.96)),
+    linear-gradient(135deg, rgba(159, 232, 112, 0.16), rgba(56, 200, 255, 0.1));
+  box-shadow:
+    0 22px 48px rgba(0, 0, 0, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.78);
+  color: var(--text-dark);
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card)::after {
+  background: linear-gradient(90deg, var(--accent-mint), var(--accent-cyan), transparent);
+  opacity: 1;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) .kpi-card-header,
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) .kpi-card-header span:first-child {
+  color: #24435f;
+  font-weight: 950;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) strong {
+  color: var(--text-dark);
+  font-weight: 950;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) p {
+  color: var(--text-muted-dark);
+  font-weight: 650;
+}
+
+.kpi-icon,
+.panel-icon,
+.dashboard-pipeline-icon,
+.dashboard-module-icon {
+  border-color: rgba(6, 40, 53, 0.12);
+  color: #061f1a;
+  background: linear-gradient(135deg, var(--accent-mint), var(--accent-cyan));
+  box-shadow: 0 14px 26px rgba(16, 86, 112, 0.18);
+}
+
+.dashboard-kpi-card-positive strong,
+.energy-kpi-card-positive strong,
+.performance-value-positive,
+.energy-value-positive {
+  color: var(--positive);
+}
+
+.dashboard-kpi-card-risk strong,
+.energy-kpi-card-risk strong {
+  color: var(--warning);
+}
+
+.dashboard-kpi-card-negative strong,
+.energy-kpi-card-negative strong,
+.performance-value-negative,
+.energy-value-negative {
+  color: var(--negative);
+}
+
+/* Filter panels stay dark for cockpit contrast */
+:where(.advisor-filter-panel, .market-filter-panel, .macro-filter-panel, .performance-filter-panel, .energy-filter-panel) {
+  border-color: var(--border-strong);
+  background:
+    linear-gradient(135deg, var(--surface-dark), var(--surface-dark-2)),
+    linear-gradient(90deg, rgba(159, 232, 112, 0.12), rgba(56, 200, 255, 0.08));
+  color: var(--text-primary);
+}
+
+:where(.advisor-filter-panel, .market-filter-panel, .macro-filter-panel, .performance-filter-panel, .energy-filter-panel) :where(h2, strong) {
+  color: var(--text-primary);
+}
+
+:where(.advisor-filter-panel, .market-filter-panel, .macro-filter-panel, .performance-filter-panel, .energy-filter-panel) :where(p, span, .advisor-filter-field span) {
+  color: var(--text-secondary);
+}
+
+.advisor-filter-field select,
+.advisor-filter-field input[type="number"],
+.advisor-filter-field input[type="date"] {
+  border-color: rgba(159, 232, 112, 0.3);
+  background: rgba(5, 16, 28, 0.86);
+  color: var(--text-primary);
+}
+
+/* Recharts visibility normalization */
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) {
+  border-color: var(--border-soft);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 252, 0.99), rgba(226, 239, 246, 0.96)),
+    linear-gradient(rgba(16, 54, 78, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 54, 78, 0.065) 1px, transparent 1px);
+  background-size: auto, 34px 34px, 34px 34px;
+  box-shadow:
+    0 22px 52px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.76);
+  color: var(--text-dark);
+}
+
+:where(.market-recharts-box, .macro-recharts-box, .performance-recharts-box, .energy-recharts-box) {
+  border-color: rgba(36, 73, 101, 0.2);
+  background:
+    radial-gradient(circle at 10% 8%, rgba(159, 232, 112, 0.15), transparent 34%),
+    linear-gradient(180deg, rgba(251, 254, 254, 0.98), rgba(232, 243, 249, 0.97));
+}
+
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) :where(h2, strong) {
+  color: var(--text-dark);
+}
+
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) :where(p, span, .market-chart-helper, .macro-chart-helper, .performance-chart-helper, .energy-chart-helper, .market-chart-caption, .macro-chart-caption, .performance-chart-caption, .energy-chart-caption) {
+  color: var(--text-muted-dark);
+}
+
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) :where(.recharts-cartesian-axis-tick-value, .recharts-legend-item-text, .recharts-text) {
+  fill: #20364f !important;
+  color: #20364f !important;
+  font-weight: 850;
+}
+
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) .recharts-cartesian-grid line {
+  stroke: rgba(32, 54, 79, 0.24);
+}
+
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) .recharts-legend-wrapper {
+  color: #20364f !important;
+}
+
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) .recharts-default-tooltip {
+  border: 1px solid rgba(35, 73, 103, 0.22) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 252, 0.98) !important;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18) !important;
+  color: var(--text-dark) !important;
+}
+
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) .recharts-tooltip-label,
+:where(.market-recharts-card, .macro-recharts-card, .performance-recharts-card, .energy-recharts-card) .recharts-tooltip-item {
+  color: var(--text-dark) !important;
+}
+
+/* Table visibility normalization */
+.recommendation-table-wrap {
+  border-color: var(--border-soft);
+  background: rgba(235, 244, 249, 0.94);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+}
+
+.recommendation-table {
+  color: #15243a;
+}
+
+.recommendation-table th {
+  border-bottom-color: rgba(13, 73, 91, 0.18);
+  color: #17314a;
+  background:
+    linear-gradient(135deg, rgba(229, 243, 248, 0.99), rgba(205, 226, 238, 0.96)),
+    linear-gradient(90deg, rgba(159, 232, 112, 0.24), rgba(56, 200, 255, 0.12));
+}
+
+.recommendation-table td {
+  border-bottom-color: rgba(36, 73, 101, 0.13);
+  color: #21354e;
+}
+
+.recommendation-table tbody tr {
+  background: rgba(248, 252, 253, 0.94);
+}
+
+.recommendation-table tbody tr:nth-child(even) {
+  background: rgba(231, 242, 248, 0.95);
+}
+
+.recommendation-table tbody tr:hover {
+  background:
+    linear-gradient(90deg, rgba(159, 232, 112, 0.22), rgba(56, 200, 255, 0.13)),
+    rgba(244, 251, 250, 0.98);
+}
+
+.table-empty-state strong {
+  color: var(--text-dark);
+}
+
+.table-empty-state span {
+  color: var(--text-muted-dark);
+}
+
+.ticker-cell {
+  color: var(--text-dark);
+}
+
+.table-explanation-preview,
+.explanation-cell {
+  color: var(--text-muted-dark);
+}
+
+/* Badges and progress tracks */
+.signal-badge-buy,
+.dashboard-signal-buy {
+  color: #163300;
+  background: linear-gradient(135deg, var(--accent-mint), #48e99b);
+}
+
+.signal-badge-hold,
+.dashboard-signal-hold {
+  color: #3a2600;
+  background: linear-gradient(135deg, var(--accent-yellow), #ffb347);
+}
+
+.signal-badge-sell,
+.dashboard-signal-sell {
+  color: #fff7f9;
+  background: linear-gradient(135deg, var(--accent-coral), #ff5da2);
+}
+
+:where(.allocation-bar-track, .advisor-metric-bar-track, .metric-bar-track, .dashboard-validation-track, .dashboard-holding-track, .ranking-track, .market-return-bin-track, .signal-distribution-track) {
+  border-color: rgba(36, 73, 101, 0.18);
+  background: rgba(192, 213, 226, 0.6);
+}
+
+.loader {
+  color: var(--text-muted-dark);
+  font-weight: 700;
+}
+
+.error-message {
+  border-color: rgba(197, 56, 80, 0.28);
+  background:
+    linear-gradient(135deg, rgba(255, 244, 246, 0.98), rgba(241, 225, 235, 0.95)),
+    linear-gradient(90deg, rgba(255, 111, 134, 0.16), rgba(168, 139, 255, 0.08));
+}
+
+.error-message strong {
+  color: #9f1733;
+}
+
+.error-message span {
+  color: #713247;
+}
+
+@media (max-width: 640px) {
+  .recommendation-table tr {
+    border-color: var(--border-soft);
+    background:
+      linear-gradient(135deg, rgba(247, 252, 252, 0.98), rgba(225, 239, 247, 0.96)),
+      linear-gradient(90deg, rgba(159, 232, 112, 0.13), rgba(56, 200, 255, 0.09));
+  }
+
+  .recommendation-table td::before {
+    color: #40556d;
+  }
+}

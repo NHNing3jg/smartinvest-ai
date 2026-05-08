@@ -112,19 +112,19 @@ export default function PlatformConcept() {
           </div>
         </div>
         <div className="platform-hero-diagram" aria-label="SmartInvest AI platform modules">
-          <div className="platform-orbit-card">
+          <div className="platform-orbit-card platform-dark-card">
             <Database size={20} />
             <span>Warehouse</span>
           </div>
-          <div className="platform-orbit-card">
+          <div className="platform-orbit-card platform-dark-card">
             <Server size={20} />
             <span>API</span>
           </div>
-          <div className="platform-orbit-card platform-orbit-card-focus">
+          <div className="platform-orbit-card platform-orbit-card-focus platform-dark-card">
             <Brain size={22} />
             <strong>Advisor</strong>
           </div>
-          <div className="platform-orbit-card">
+          <div className="platform-orbit-card platform-dark-card">
             <BarChart3 size={20} />
             <span>BI</span>
           </div>
@@ -132,7 +132,7 @@ export default function PlatformConcept() {
       </div>
 
       <div className="platform-summary-grid">
-        <article className="content-panel platform-intro-card">
+        <article className="content-panel platform-intro-card platform-light-card">
           <span className="eyebrow">What is SmartInvest AI?</span>
           <h2>Decision support, not automatic investing</h2>
           <p>
@@ -145,7 +145,7 @@ export default function PlatformConcept() {
           </p>
         </article>
 
-        <article className="content-panel platform-problem-card">
+        <article className="content-panel platform-problem-card platform-light-card">
           <span className="eyebrow">Problem addressed</span>
           <h2>Investment signals are hard to trust when context is fragmented</h2>
           <p>
@@ -156,7 +156,7 @@ export default function PlatformConcept() {
         </article>
       </div>
 
-      <div className="content-panel platform-solution-panel">
+      <div className="content-panel platform-solution-panel platform-dark-card">
         <div className="panel-heading-row">
           <div>
             <span className="eyebrow">Proposed solution</span>
@@ -168,7 +168,7 @@ export default function PlatformConcept() {
           {platformLayers.map((layer) => {
             const Icon = layer.icon;
             return (
-              <article className="platform-layer-card" key={layer.title}>
+              <article className="platform-layer-card platform-light-card" key={layer.title}>
                 <span className="platform-layer-icon">
                   <Icon size={20} />
                 </span>
@@ -180,7 +180,7 @@ export default function PlatformConcept() {
         </div>
       </div>
 
-      <div className="content-panel platform-pipeline-panel">
+      <div className="content-panel platform-pipeline-panel platform-dark-card">
         <div className="panel-heading-row">
           <div>
             <span className="eyebrow">Data pipeline</span>
@@ -192,7 +192,7 @@ export default function PlatformConcept() {
           {architectureSteps.map((step) => {
             const Icon = step.icon;
             return (
-              <article className="platform-pipeline-node" key={step.label}>
+              <article className="platform-pipeline-node platform-pipeline-card platform-light-card" key={step.label}>
                 <span>
                   <Icon size={18} />
                 </span>
@@ -207,7 +207,7 @@ export default function PlatformConcept() {
         {systemModules.map((module) => {
           const Icon = module.icon;
           return (
-            <article className="content-panel platform-module-card" key={module.title}>
+            <article className="content-panel platform-module-card platform-feature-card platform-light-card" key={module.title}>
               <span className="platform-module-icon">
                 <Icon size={21} />
               </span>
@@ -218,7 +218,7 @@ export default function PlatformConcept() {
         })}
       </div>
 
-      <div className="content-panel platform-workflow-panel">
+      <div className="content-panel platform-workflow-panel platform-dark-card">
         <div className="panel-heading-row">
           <div>
             <span className="eyebrow">How the modules work together</span>
@@ -227,22 +227,22 @@ export default function PlatformConcept() {
           <CheckCircle2 size={24} />
         </div>
         <div className="platform-workflow">
-          <article>
+          <article className="platform-light-card">
             <span>1</span>
             <strong>Explore context</strong>
             <p>Market, macro, energy and performance pages help identify the environment around an asset.</p>
           </article>
-          <article>
+          <article className="platform-light-card">
             <span>2</span>
             <strong>Review recommendation logic</strong>
             <p>The AI Advisor exposes signal, probability, confidence, score and explanation together.</p>
           </article>
-          <article>
+          <article className="platform-light-card">
             <span>3</span>
             <strong>Validate behavior</strong>
             <p>Backtesting summarizes historical signal behavior so the user can inspect strengths and limits.</p>
           </article>
-          <article>
+          <article className="platform-light-card">
             <span>4</span>
             <strong>Simulate allocation</strong>
             <p>The portfolio module turns recommendation context into an allocation view for scenario analysis.</p>
@@ -250,7 +250,7 @@ export default function PlatformConcept() {
         </div>
       </div>
 
-      <div className="content-panel platform-crisp-panel">
+      <div className="content-panel platform-crisp-panel platform-light-card">
         <div className="panel-heading-row">
           <div>
             <span className="eyebrow">CRISP-DM alignment</span>
@@ -260,7 +260,7 @@ export default function PlatformConcept() {
         </div>
         <div className="platform-crisp-grid">
           {crispDmSteps.map((step, index) => (
-            <article className="platform-crisp-step" key={step.title}>
+            <article className="platform-crisp-step platform-crisp-card platform-light-card" key={step.title}>
               <span>{String(index + 1).padStart(2, "0")}</span>
               <strong>{step.title}</strong>
               <p>{step.text}</p>
@@ -269,7 +269,7 @@ export default function PlatformConcept() {
         </div>
       </div>
 
-      <div className="content-panel split-panel platform-limitations-panel">
+      <div className="content-panel split-panel platform-limitations-panel platform-light-card">
         <ShieldAlert className="panel-icon" size={32} />
         <div>
           <span className="eyebrow">Limitations and no financial advice</span>

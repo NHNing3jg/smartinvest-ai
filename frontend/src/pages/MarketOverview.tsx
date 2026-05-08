@@ -427,10 +427,6 @@ export default function MarketOverview() {
         apiClient.get<unknown>("/api/market/returns-distribution", { params }),
       ]);
 
-      console.log("Summary response:", summaryResponse.data);
-      console.log("Daily response:", dailyResponse.data);
-      console.log("Returns response:", returnsResponse.data);
-
       setSummary(normalizeSummary(summaryResponse.data));
       setDailyRows(normalizeDailyRows(dailyResponse.data));
       setReturnRows(normalizeReturnRows(returnsResponse.data));
@@ -459,13 +455,10 @@ export default function MarketOverview() {
   const tableRows = useMemo(() => getLatestRows(dailyRows, tableLimit), [dailyRows, tableLimit]);
   const priceChartData = useMemo(() => {
     const data = downsampleRows(buildPriceChartData(dailyRows), PRICE_POINT_LIMIT);
-    console.log("Daily rows:", dailyRows.length, dailyRows.slice(0, 3));
-    console.log("Price chart data:", data.length, data.slice(0, 3));
     return data;
   }, [dailyRows]);
   const volumeChartData = useMemo(() => {
     const data = downsampleRows(buildVolumeChartData(dailyRows).slice(-VOLUME_POINT_LIMIT), VOLUME_POINT_LIMIT);
-    console.log("Volume chart data:", data.length, data.slice(0, 3));
     return data;
   }, [dailyRows]);
   const averageVolume = useMemo(() => {
@@ -474,8 +467,6 @@ export default function MarketOverview() {
   }, [volumeChartData]);
   const returnBins = useMemo(() => {
     const bins = buildReturnBins(returnRows, 9);
-    console.log("Return rows:", returnRows.length, returnRows.slice(0, 3));
-    console.log("Return bins:", bins.length, bins);
     return bins;
   }, [returnRows]);
   const canToggleTable = sortedDailyRows.length > DEFAULT_TABLE_LIMIT;
