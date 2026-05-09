@@ -32,6 +32,8 @@ import {
 } from "recharts";
 
 import { apiClient } from "../api/client";
+import CountUpValue from "../components/reactbits/CountUpValue";
+import SpotlightPanel from "../components/reactbits/SpotlightPanel";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import Loader from "../components/ui/Loader";
 import type {
@@ -430,16 +432,18 @@ const getLatestRows = (rows: EnergyMergedRow[], limit: number) =>
 
 function EnergyKpiCard({ title, value, detail, icon: Icon, tone }: EnergyKpiCardProps) {
   return (
-    <article className={`energy-kpi-card energy-kpi-card-${tone}`}>
+    <SpotlightPanel className={`energy-kpi-card energy-kpi-card-${tone}`}>
       <div className="kpi-card-header">
         <span>{title}</span>
         <span className="kpi-icon">
           <Icon size={18} />
         </span>
       </div>
-      <strong>{value}</strong>
+      <strong>
+        <CountUpValue value={value} />
+      </strong>
       <p>{detail}</p>
-    </article>
+    </SpotlightPanel>
   );
 }
 

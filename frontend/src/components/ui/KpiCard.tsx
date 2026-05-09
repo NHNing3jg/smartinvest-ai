@@ -1,4 +1,6 @@
 import type { LucideIcon } from "lucide-react";
+import CountUpValue from "../reactbits/CountUpValue";
+import SpotlightPanel from "../reactbits/SpotlightPanel";
 
 type KpiCardProps = {
   title: string;
@@ -10,15 +12,17 @@ type KpiCardProps = {
 
 export default function KpiCard({ title, value, detail, icon: Icon, tone = "neutral" }: KpiCardProps) {
   return (
-    <article className={`kpi-card kpi-card-${tone}`}>
+    <SpotlightPanel className={`kpi-card kpi-card-${tone}`}>
       <div className="kpi-card-header">
         <span>{title}</span>
         <span className="kpi-icon">
           <Icon size={18} />
         </span>
       </div>
-      <strong>{value}</strong>
+      <strong>
+        <CountUpValue value={value} />
+      </strong>
       <p>{detail}</p>
-    </article>
+    </SpotlightPanel>
   );
 }
