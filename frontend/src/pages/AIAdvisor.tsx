@@ -393,42 +393,49 @@ export default function AIAdvisor() {
               value={formatCount(filteredRecommendations.length)}
               detail="Rows matching the active filters"
               icon={Sparkles}
+              tone="neutral"
             />
             <KpiCard
               title="BUY Count"
               value={formatCount(signalCounts.BUY)}
               detail="Mint opportunity signals"
               icon={TrendingUp}
+              tone="positive"
             />
             <KpiCard
               title="HOLD Count"
               value={formatCount(signalCounts.HOLD)}
               detail="Balanced watchlist signals"
               icon={ShieldCheck}
+              tone="risk"
             />
             <KpiCard
               title="SELL Count"
               value={formatCount(signalCounts.SELL)}
               detail="Coral risk-off signals"
               icon={TrendingDown}
+              tone="negative"
             />
             <KpiCard
               title="Average Proba Up"
               value={formatPercent(averageProbaUp)}
               detail="Mean upside probability in filtered rows"
               icon={Gauge}
+              tone="positive"
             />
             <KpiCard
               title="Top Advisor Score"
               value={formatMetric(topAdvisorScore)}
               detail="Highest model-ranked score in view"
               icon={ArrowUpRight}
+              tone="positive"
             />
             <KpiCard
               title="Latest Date"
               value={formatDateId(latestDateId)}
               detail="Most recent date_id in filtered rows"
               icon={CalendarRange}
+              tone="purple"
             />
           </div>
 

@@ -400,3 +400,451 @@ body {
     color: #40556d;
   }
 }
+
+/* KPI readability pass for Dashboard and AI Advisor. */
+:root {
+  --metric-surface: rgba(255, 255, 252, 0.99);
+  --metric-surface-soft: rgba(234, 245, 250, 0.98);
+  --metric-ink: #061625;
+  --metric-label: #1d3952;
+  --metric-muted: #2c4058;
+  --metric-border: rgba(55, 91, 119, 0.34);
+  --metric-positive: #047c64;
+  --metric-negative: #b42345;
+  --metric-risk: #7a5400;
+  --metric-purple: #5546a7;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) {
+  isolation: isolate;
+  gap: 14px;
+  min-height: 166px;
+  padding: 20px;
+  border-color: var(--metric-border);
+  background:
+    linear-gradient(135deg, var(--metric-surface), var(--metric-surface-soft)),
+    linear-gradient(135deg, rgba(159, 232, 112, 0.12), rgba(56, 200, 255, 0.1));
+  box-shadow:
+    0 24px 52px rgba(0, 0, 0, 0.24),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.76);
+  color: var(--metric-ink);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card):hover {
+  border-color: rgba(15, 105, 145, 0.42);
+  box-shadow:
+    0 28px 58px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(56, 200, 255, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.82);
+  transform: translateY(-2px);
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card)::before {
+  z-index: 0;
+  opacity: 0.46;
+  pointer-events: none;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card)::after {
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-mint), transparent);
+  opacity: 1;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) .kpi-card-header {
+  align-items: start;
+  gap: 14px;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) .kpi-card-header,
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) .kpi-card-header span:first-child {
+  color: var(--metric-label);
+  font-size: 0.76rem;
+  font-weight: 950;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) strong {
+  color: var(--metric-ink);
+  font-size: clamp(1.62rem, 1.1rem + 1vw, 2.12rem);
+  font-weight: 950;
+  line-height: 1.04;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-kpi-card strong {
+  font-size: clamp(1.42rem, 1.05rem + 0.75vw, 1.86rem);
+}
+
+:where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) p {
+  max-width: none;
+  color: var(--metric-muted);
+  font-size: 0.92rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+:where(.kpi-card-positive, .dashboard-kpi-card-positive, .energy-kpi-card-positive) strong {
+  color: var(--metric-positive);
+}
+
+:where(.kpi-card-negative, .dashboard-kpi-card-negative, .energy-kpi-card-negative) strong {
+  color: var(--metric-negative);
+}
+
+:where(.kpi-card-risk, .dashboard-kpi-card-risk, .energy-kpi-card-risk) strong {
+  color: var(--metric-risk);
+}
+
+:where(.kpi-card-purple, .dashboard-kpi-card-purple, .energy-kpi-card-purple) strong {
+  color: var(--metric-purple);
+}
+
+:where(.kpi-card-positive, .dashboard-kpi-card-positive, .energy-kpi-card-positive)::after {
+  background: linear-gradient(90deg, #047c64, var(--accent-mint), transparent);
+}
+
+:where(.kpi-card-negative, .dashboard-kpi-card-negative, .energy-kpi-card-negative)::after {
+  background: linear-gradient(90deg, #b42345, var(--accent-coral), transparent);
+}
+
+:where(.kpi-card-risk, .dashboard-kpi-card-risk, .energy-kpi-card-risk)::after {
+  background: linear-gradient(90deg, #8a5d00, var(--accent-yellow), transparent);
+}
+
+:where(.kpi-card-purple, .dashboard-kpi-card-purple, .energy-kpi-card-purple)::after {
+  background: linear-gradient(90deg, #5546a7, var(--accent-purple), var(--accent-cyan), transparent);
+}
+
+.kpi-icon,
+.panel-icon,
+.dashboard-pipeline-icon,
+.dashboard-module-icon {
+  border-color: rgba(6, 40, 53, 0.16);
+  color: #041d18;
+  background: linear-gradient(135deg, #9fe870, #38c8ff);
+  box-shadow:
+    0 14px 28px rgba(16, 86, 112, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+:where(.kpi-card-negative, .dashboard-kpi-card-negative, .energy-kpi-card-negative) .kpi-icon {
+  color: #fff7f9;
+  background: linear-gradient(135deg, #ff6f86, #ff5da2);
+}
+
+:where(.kpi-card-risk, .dashboard-kpi-card-risk, .energy-kpi-card-risk) .kpi-icon {
+  color: #3a2600;
+  background: linear-gradient(135deg, #ffd86b, #ffb347);
+}
+
+:where(.kpi-card-purple, .dashboard-kpi-card-purple, .energy-kpi-card-purple) .kpi-icon {
+  color: #f7f4ff;
+  background: linear-gradient(135deg, #a88bff, #277dff);
+}
+
+.page-hero .hero-card {
+  min-height: 108px;
+  border-color: rgba(159, 232, 112, 0.3);
+  background:
+    linear-gradient(135deg, rgba(17, 43, 68, 0.94), rgba(7, 21, 37, 0.8)),
+    radial-gradient(circle at 12% 8%, rgba(56, 200, 255, 0.18), transparent 44%);
+  box-shadow:
+    0 24px 46px rgba(0, 0, 0, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.page-hero .hero-card span {
+  color: #c7d9e8;
+  font-weight: 950;
+}
+
+.page-hero .hero-card strong {
+  color: #f8fdff;
+  font-size: 1.62rem;
+  line-height: 1.05;
+}
+
+.dashboard-hero-badges span {
+  border-color: rgba(159, 232, 112, 0.28);
+  background: rgba(246, 251, 251, 0.96);
+  color: #0d2740;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
+}
+
+.dashboard-status-card,
+.dashboard-recommendation-card,
+.dashboard-snapshot-panel,
+.advisor-chart-panel,
+.recommendation-panel,
+.advisor-explanations-panel {
+  border-color: rgba(55, 91, 119, 0.28);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 252, 0.99), rgba(229, 242, 248, 0.97)),
+    linear-gradient(135deg, rgba(56, 200, 255, 0.08), rgba(159, 232, 112, 0.08));
+  box-shadow:
+    0 24px 52px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.76);
+}
+
+.dashboard-status-card {
+  min-height: 132px;
+  padding: 18px;
+}
+
+.dashboard-status-card span,
+.dashboard-recommendation-card dt,
+.dashboard-panel-note,
+.advisor-metric-bar-meta span,
+.metric-bar-meta span,
+.signal-distribution-meta span,
+.advisor-explanation-metrics span {
+  color: var(--metric-label);
+  font-weight: 950;
+}
+
+.dashboard-status-card strong {
+  color: var(--metric-ink);
+  font-size: 1.18rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.dashboard-status-card p {
+  color: var(--metric-muted);
+  font-weight: 750;
+}
+
+.dashboard-status-online svg,
+.performance-value-positive,
+.energy-value-positive {
+  color: var(--metric-positive);
+}
+
+.dashboard-status-partial svg {
+  color: var(--metric-risk);
+}
+
+.dashboard-status-offline svg,
+.performance-value-negative,
+.energy-value-negative {
+  color: var(--metric-negative);
+}
+
+.dashboard-recommendation-card {
+  padding: 18px;
+}
+
+.dashboard-recommendation-card strong,
+.dashboard-holding-row strong,
+.dashboard-validation-row strong,
+.dashboard-holding-row span,
+.dashboard-recommendation-card dd {
+  color: var(--metric-ink);
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-recommendation-card dd {
+  font-size: 1.08rem;
+}
+
+.dashboard-holding-row {
+  padding: 12px;
+  border: 1px solid rgba(55, 91, 119, 0.18);
+  border-radius: 8px;
+  background: rgba(247, 252, 252, 0.82);
+}
+
+.advisor-metric-bar-row,
+.metric-bar-row {
+  padding: 12px;
+  border: 1px solid rgba(55, 91, 119, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 252, 0.94), rgba(235, 246, 250, 0.88)),
+    linear-gradient(90deg, rgba(56, 200, 255, 0.05), rgba(159, 232, 112, 0.05));
+}
+
+.advisor-metric-bar-meta strong,
+.metric-bar-meta strong,
+.signal-distribution-meta strong {
+  color: var(--metric-ink);
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+
+.advisor-metric-bar-meta strong,
+.metric-bar-meta strong {
+  font-size: 1.05rem;
+}
+
+.advisor-metric-bar-track,
+.metric-bar-track,
+.dashboard-validation-track,
+.dashboard-holding-track,
+.signal-distribution-track {
+  height: 17px;
+  border-color: rgba(36, 73, 101, 0.24);
+  background:
+    linear-gradient(180deg, rgba(215, 230, 239, 0.9), rgba(190, 211, 225, 0.78));
+  box-shadow: inset 0 1px 2px rgba(6, 22, 37, 0.12);
+}
+
+.advisor-metric-bar-fill,
+.metric-bar-fill,
+.dashboard-validation-fill,
+.dashboard-holding-track span,
+.signal-distribution-track span {
+  box-shadow:
+    0 8px 18px rgba(6, 22, 37, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+}
+
+.advisor-metric-bar-fill-buy,
+.metric-bar-fill-buy,
+.dashboard-validation-fill.dashboard-signal-buy,
+.signal-distribution-buy .signal-distribution-track span {
+  background: linear-gradient(90deg, #047c64, #10cdbc, #9fe870);
+}
+
+.advisor-metric-bar-fill-hold,
+.metric-bar-fill-hold,
+.dashboard-validation-fill.dashboard-signal-hold,
+.signal-distribution-hold .signal-distribution-track span {
+  background: linear-gradient(90deg, #8a5d00, #ffd86b, #ffb347);
+}
+
+.advisor-metric-bar-fill-sell,
+.metric-bar-fill-sell,
+.dashboard-validation-fill.dashboard-signal-sell,
+.signal-distribution-sell .signal-distribution-track span {
+  background: linear-gradient(90deg, #b42345, #ff6f86, #ff5da2);
+}
+
+.signal-distribution-card {
+  min-height: 142px;
+  padding: 18px;
+  border-color: rgba(55, 91, 119, 0.26);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 252, 0.98), rgba(233, 245, 250, 0.96)),
+    linear-gradient(135deg, rgba(56, 200, 255, 0.08), rgba(159, 232, 112, 0.08));
+}
+
+.signal-distribution-meta strong {
+  font-size: 1.95rem;
+  line-height: 1;
+}
+
+.signal-distribution-card em {
+  color: var(--metric-muted);
+  font-weight: 850;
+}
+
+.advisor-explanation-card {
+  gap: 14px;
+  padding: 18px;
+  border-color: rgba(55, 91, 119, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 252, 0.98), rgba(232, 244, 250, 0.96)),
+    linear-gradient(135deg, rgba(56, 200, 255, 0.07), rgba(168, 139, 255, 0.07));
+}
+
+.advisor-explanation-ticker,
+.advisor-explanation-card-header strong {
+  color: var(--metric-ink);
+  font-weight: 950;
+}
+
+.advisor-explanation-card-header strong {
+  font-size: 1.28rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.advisor-explanation-metrics span {
+  border-color: rgba(55, 91, 119, 0.18);
+  background: rgba(246, 251, 251, 0.92);
+  color: var(--metric-label);
+}
+
+.advisor-explanation-card p,
+.table-explanation-preview,
+.explanation-cell {
+  color: var(--metric-muted);
+  font-weight: 650;
+}
+
+.recommendation-table-wrap {
+  border-color: rgba(55, 91, 119, 0.24);
+  background: rgba(237, 247, 250, 0.94);
+}
+
+.recommendation-table th {
+  color: #18324a;
+}
+
+.recommendation-table td {
+  color: #1a2f47;
+  font-weight: 650;
+}
+
+.signal-badge-buy,
+.dashboard-signal-buy {
+  color: #0f2f00;
+  background: linear-gradient(135deg, #9fe870, #48e99b);
+}
+
+.signal-badge-hold,
+.dashboard-signal-hold {
+  color: #332100;
+  background: linear-gradient(135deg, #ffd86b, #ffb347);
+}
+
+.signal-badge-sell,
+.dashboard-signal-sell {
+  color: #fff7f9;
+  background: linear-gradient(135deg, #d92e55, #ff5da2);
+}
+
+@media (max-width: 640px) {
+  :where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) {
+    min-height: 148px;
+    padding: 18px;
+  }
+
+  :where(.kpi-card, .dashboard-kpi-card, .energy-kpi-card) strong,
+  .dashboard-kpi-card strong {
+    font-size: clamp(1.5rem, 1.22rem + 1.7vw, 1.9rem);
+  }
+
+  .advisor-metric-bar-meta,
+  .metric-bar-meta,
+  .signal-distribution-meta,
+  .dashboard-validation-row > div,
+  .dashboard-holding-row > div {
+    align-items: start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .dashboard-status-card,
+  .dashboard-recommendation-card,
+  .advisor-explanation-card,
+  .signal-distribution-card,
+  .advisor-metric-bar-row,
+  .metric-bar-row {
+    padding: 16px;
+  }
+
+  .page-hero .hero-card {
+    width: 100%;
+  }
+}
