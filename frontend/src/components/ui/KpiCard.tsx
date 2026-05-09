@@ -5,11 +5,12 @@ type KpiCardProps = {
   value: string;
   detail: string;
   icon: LucideIcon;
+  tone?: "positive" | "negative" | "risk" | "neutral" | "purple";
 };
 
-export default function KpiCard({ title, value, detail, icon: Icon }: KpiCardProps) {
+export default function KpiCard({ title, value, detail, icon: Icon, tone = "neutral" }: KpiCardProps) {
   return (
-    <article className="kpi-card">
+    <article className={`kpi-card kpi-card-${tone}`}>
       <div className="kpi-card-header">
         <span>{title}</span>
         <span className="kpi-icon">
