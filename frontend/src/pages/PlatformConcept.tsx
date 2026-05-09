@@ -17,6 +17,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import DecisionFlow from "../components/reactbits/DecisionFlow";
+import GlareCard from "../components/reactbits/GlareCard";
 
 type ConceptCard = {
   icon: LucideIcon;
@@ -131,6 +133,8 @@ export default function PlatformConcept() {
         </div>
       </div>
 
+      <DecisionFlow />
+
       <div className="platform-summary-grid">
         <article className="content-panel platform-intro-card platform-light-card">
           <span className="eyebrow">What is SmartInvest AI?</span>
@@ -207,13 +211,13 @@ export default function PlatformConcept() {
         {systemModules.map((module) => {
           const Icon = module.icon;
           return (
-            <article className="content-panel platform-module-card platform-feature-card platform-light-card" key={module.title}>
+            <GlareCard className="content-panel platform-module-card platform-feature-card platform-light-card" key={module.title}>
               <span className="platform-module-icon">
                 <Icon size={21} />
               </span>
               <h2>{module.title}</h2>
               <p>{module.text}</p>
-            </article>
+            </GlareCard>
           );
         })}
       </div>

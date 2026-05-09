@@ -161,3 +161,310 @@
     width: 100%;
   }
 }
+
+/* Platform Concept-only repair after the global cockpit contrast pass.
+   Light cards can appear inside dark section panels, so their text must win locally. */
+.platform-concept-page
+  :where(
+    .platform-light-card,
+    .platform-layer-card,
+    .platform-feature-card,
+    .platform-pipeline-card,
+    .platform-crisp-card,
+    .platform-workflow article,
+    .platform-limitations-panel
+  ) {
+  border-color: var(--platform-border-light) !important;
+  background:
+    linear-gradient(135deg, rgba(248, 252, 252, 0.99), rgba(226, 240, 247, 0.97)),
+    linear-gradient(135deg, rgba(159, 232, 112, 0.13), rgba(56, 200, 255, 0.08)) !important;
+  color: #0b1f3a !important;
+}
+
+.platform-concept-page
+  :where(
+    .platform-light-card,
+    .platform-layer-card,
+    .platform-feature-card,
+    .platform-pipeline-card,
+    .platform-crisp-card,
+    .platform-workflow article,
+    .platform-limitations-panel
+  )
+  :where(h2, h3, strong, b) {
+  color: #0b1f3a !important;
+  opacity: 1 !important;
+}
+
+.platform-concept-page
+  :where(
+    .platform-light-card,
+    .platform-layer-card,
+    .platform-feature-card,
+    .platform-pipeline-card,
+    .platform-crisp-card,
+    .platform-workflow article,
+    .platform-limitations-panel
+  )
+  :where(p, li, em) {
+  color: #37556b !important;
+  opacity: 1 !important;
+}
+
+.platform-concept-page
+  :where(
+    .platform-light-card,
+    .platform-layer-card,
+    .platform-feature-card,
+    .platform-pipeline-card,
+    .platform-crisp-card,
+    .platform-workflow article,
+    .platform-limitations-panel
+  )
+  :where(span) {
+  color: #28465c !important;
+  opacity: 1 !important;
+}
+
+.platform-concept-page
+  :where(.platform-light-card, .platform-limitations-panel)
+  .eyebrow {
+  border-color: rgba(11, 73, 58, 0.18) !important;
+  background: rgba(159, 232, 112, 0.24) !important;
+  color: #11382f !important;
+}
+
+.platform-concept-page
+  :where(
+    .platform-layer-icon,
+    .platform-module-icon,
+    .platform-pipeline-node > span,
+    .platform-workflow article > span,
+    .platform-crisp-step > span
+  ) {
+  border-color: rgba(6, 40, 53, 0.12) !important;
+  color: #061f1a !important;
+  background: linear-gradient(135deg, #9fe870, #38c8ff) !important;
+  box-shadow: 0 14px 26px rgba(16, 86, 112, 0.18) !important;
+}
+
+.platform-concept-page .platform-module-card:nth-child(4) .platform-module-icon,
+.platform-concept-page .platform-layer-card:nth-child(2) .platform-layer-icon {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #a88bff, #277dff) !important;
+}
+
+.platform-concept-page .platform-module-card:nth-child(5) .platform-module-icon,
+.platform-concept-page .platform-layer-card:nth-child(3) .platform-layer-icon,
+.platform-concept-page .platform-crisp-step:nth-child(3n) > span {
+  color: #3a2600 !important;
+  background: linear-gradient(135deg, #ffd86b, #ff9f7a) !important;
+}
+
+.platform-concept-page
+  :where(.platform-dark-card, .platform-solution-panel, .platform-pipeline-panel, .platform-workflow-panel)
+  > .panel-heading-row
+  :where(h2, h3, strong) {
+  color: #f5fbff !important;
+}
+
+.platform-concept-page
+  :where(.platform-dark-card, .platform-solution-panel, .platform-pipeline-panel, .platform-workflow-panel)
+  > .panel-heading-row
+  :where(p, span) {
+  color: #c8dceb !important;
+}
+
+.platform-concept-page
+  :where(.platform-dark-card, .platform-solution-panel, .platform-pipeline-panel, .platform-workflow-panel)
+  > .panel-heading-row
+  .eyebrow {
+  border-color: rgba(159, 232, 112, 0.34) !important;
+  background: rgba(159, 232, 112, 0.13) !important;
+  color: #dfffad !important;
+}
+
+.platform-concept-page .platform-decision-flow {
+  display: grid;
+  gap: 22px;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.platform-concept-page .platform-decision-flow .panel-heading-row {
+  align-items: end;
+}
+
+.platform-concept-page .platform-decision-flow .panel-heading-row h2 {
+  color: #f5fbff !important;
+}
+
+.platform-concept-page .platform-decision-flow .panel-heading-row p {
+  max-width: 560px;
+  color: #c8dceb !important;
+  font-weight: 650;
+}
+
+.decision-flow-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(112px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  min-height: 128px;
+}
+
+.decision-flow-line {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: 8%;
+  left: 8%;
+  height: 2px;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, rgba(159, 232, 112, 0.18), rgba(56, 200, 255, 0.52), rgba(39, 125, 255, 0.26)),
+    rgba(199, 215, 229, 0.12);
+  box-shadow: 0 0 18px rgba(56, 200, 255, 0.18);
+}
+
+.decision-flow-pulse {
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - 5px);
+  left: 7%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #9fe870;
+  box-shadow:
+    0 0 0 5px rgba(159, 232, 112, 0.14),
+    0 0 22px rgba(56, 200, 255, 0.48);
+  animation: decisionFlowPulse 5600ms cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+
+.decision-flow-node {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  min-height: 116px;
+  padding: 15px 10px;
+  border: 1px solid rgba(159, 232, 112, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(17, 43, 68, 0.94), rgba(7, 21, 37, 0.82)),
+    radial-gradient(circle at 18% 10%, rgba(56, 200, 255, 0.14), transparent 44%);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  animation: siScaleReveal 560ms var(--motion-ease-soft) both;
+  animation-delay: var(--motion-delay);
+}
+
+.decision-flow-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(6, 40, 53, 0.16);
+  border-radius: 8px;
+  color: #041d18 !important;
+  background: linear-gradient(135deg, #9fe870, #38c8ff);
+  box-shadow:
+    0 14px 28px rgba(16, 86, 112, 0.26),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.decision-flow-node strong {
+  color: #f5fbff !important;
+  font-size: 0.88rem;
+  line-height: 1.25;
+  text-align: center;
+}
+
+@keyframes decisionFlowPulse {
+  0% {
+    left: 7%;
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 92%;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 980px) {
+  .decision-flow-track {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .decision-flow-line {
+    top: 24px;
+    bottom: 24px;
+    left: 31px;
+    width: 2px;
+    height: auto;
+    background:
+      linear-gradient(180deg, rgba(159, 232, 112, 0.18), rgba(56, 200, 255, 0.52), rgba(39, 125, 255, 0.26)),
+      rgba(199, 215, 229, 0.12);
+  }
+
+  .decision-flow-pulse {
+    top: 20px;
+    left: 27px;
+    animation-name: decisionFlowPulseMobile;
+  }
+
+  .decision-flow-node {
+    grid-template-columns: 42px minmax(0, 1fr);
+    align-content: center;
+    justify-items: start;
+    min-height: 76px;
+    padding: 14px 16px;
+    text-align: left;
+  }
+
+  .decision-flow-node strong {
+    text-align: left;
+  }
+}
+
+@keyframes decisionFlowPulseMobile {
+  0% {
+    top: 20px;
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  100% {
+    top: calc(100% - 30px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decision-flow-pulse {
+    animation: none !important;
+    opacity: 1;
+  }
+}

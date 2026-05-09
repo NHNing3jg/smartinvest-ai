@@ -26,6 +26,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { apiClient } from "../api/client";
+import CountUpValue from "../components/reactbits/CountUpValue";
+import SpotlightPanel from "../components/reactbits/SpotlightPanel";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import Loader from "../components/ui/Loader";
 import type { BacktestMetricRow, BacktestSignal, BacktestSummaryRow } from "../types/backtest";
@@ -456,16 +458,18 @@ const signalClass = (signal: string) => `dashboard-signal-${signal.toLowerCase()
 
 function ExecutiveKpiCard({ title, value, detail, icon: Icon, tone }: ExecutiveKpi) {
   return (
-    <article className={`dashboard-kpi-card dashboard-kpi-card-${tone}`}>
+    <SpotlightPanel className={`dashboard-kpi-card dashboard-kpi-card-${tone}`}>
       <div className="kpi-card-header">
         <span>{title}</span>
         <span className="kpi-icon">
           <Icon size={18} />
         </span>
       </div>
-      <strong>{value}</strong>
+      <strong>
+        <CountUpValue value={value} />
+      </strong>
       <p>{detail}</p>
-    </article>
+    </SpotlightPanel>
   );
 }
 
