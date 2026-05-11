@@ -17,6 +17,28 @@ from sklearn.metrics import (
 )
 from xgboost import XGBClassifier
 
+try:
+    from src.ml.ml_metrics_exporter import (
+        export_classification_metrics,
+        export_feature_importance,
+        update_model_comparison,
+    )
+except ModuleNotFoundError:
+    try:
+        from ml_metrics_exporter import (
+            export_classification_metrics,
+            export_feature_importance,
+            update_model_comparison,
+        )
+    except Exception:
+        export_classification_metrics = None
+        export_feature_importance = None
+        update_model_comparison = None
+except Exception:
+    export_classification_metrics = None
+    export_feature_importance = None
+    update_model_comparison = None
+
 MODEL_DIR = Path("models")
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -278,6 +300,44 @@ def main():
     test_proba = model.predict_proba(X_test)[:, 1]
     test_pred = (test_proba >= threshold).astype(int)
     evaluate_model("TEST RESULTS", y_test, test_pred, test_proba)
+
+    try:
+        if (
+            export_classification_metrics is None
+            or export_feature_importance is None
+            or update_model_comparison is None
+        ):
+            raise RuntimeError("ML metrics exporter is unavailable")
+
+        validation_metrics = export_classification_metrics(
+            y_valid,
+            valid_pred,
+            labels=[0, 1],
+            model_name="direction_model_xgb_validation",
+        )
+        test_metrics = export_classification_metrics(
+            y_test,
+            test_pred,
+            labels=[0, 1],
+            model_name="direction_model_xgb_test",
+        )
+        export_feature_importance(
+            model,
+            feature_cols,
+            model_name="direction_model_xgb",
+        )
+        if validation_metrics:
+            update_model_comparison(
+                validation_metrics,
+                model_name="direction_model_xgb_validation",
+            )
+        if test_metrics:
+            update_model_comparison(
+                test_metrics,
+                model_name="direction_model_xgb_test",
+            )
+    except Exception as e:
+        print(f"[ML EXPORT] Metrics export skipped: {e}")
 
     importances = pd.Series(model.feature_importances_, index=feature_cols).sort_values(ascending=False)
     print("\nTop 15 features:")
