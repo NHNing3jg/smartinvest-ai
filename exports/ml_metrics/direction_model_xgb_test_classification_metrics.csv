@@ -1,0 +1,2 @@
+model_name,metric_type,timestamp,observations,accuracy,precision,recall,f1_score
+direction_model_xgb_test,classification,2026-05-11T14:01:31,1150,0.5234782608695652,0.5205477848327137,0.5234782608695652,0.5203936469067202

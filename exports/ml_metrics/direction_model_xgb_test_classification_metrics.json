@@ -1,0 +1,10 @@
+{
+  "model_name": "direction_model_xgb_test",
+  "metric_type": "classification",
+  "timestamp": "2026-05-11T14:01:31",
+  "observations": 1150,
+  "accuracy": 0.5234782608695652,
+  "precision": 0.5205477848327137,
+  "recall": 0.5234782608695652,
+  "f1_score": 0.5203936469067202
+}
