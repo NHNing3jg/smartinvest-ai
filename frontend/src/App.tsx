@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import EnergyMarket from "./pages/EnergyMarket";
 import MacroAnalysis from "./pages/MacroAnalysis";
 import MarketOverview from "./pages/MarketOverview";
+import ModelEvaluation from "./pages/ModelEvaluation";
 import PlatformConcept from "./pages/PlatformConcept";
 import PerformanceAnalysis from "./pages/PerformanceAnalysis";
 import Portfolio from "./pages/Portfolio";
@@ -36,6 +37,7 @@ export default function App() {
                 <Route path="/performance-analysis" element={<PerformanceAnalysis />} />
                 <Route path="/energy-market" element={<EnergyMarket />} />
                 <Route path="/ai-advisor" element={<AIAdvisor />} />
+                <Route path="/model-evaluation" element={<ModelEvaluation />} />
                 <Route path="/backtest" element={<Backtest />} />
                 <Route path="/portfolio" element={<Portfolio />} />
                 <Route path="*" element={<Navigate to="/" replace />} />

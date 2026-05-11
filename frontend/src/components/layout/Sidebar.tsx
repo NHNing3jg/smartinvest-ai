@@ -2,6 +2,7 @@ import {
   Activity,
   Brain,
   ChartNoAxesCombined,
+  ClipboardCheck,
   Droplets,
   Globe2,
   LayoutDashboard,
@@ -21,6 +22,7 @@ const navItems = [
   { label: "Performance Analysis", path: "/performance-analysis", icon: Activity },
   { label: "Energy Market", path: "/energy-market", icon: Droplets },
   { label: "AI Advisor", path: "/ai-advisor", icon: Brain },
+  { label: "Model Evaluation", path: "/model-evaluation", icon: ClipboardCheck },
   { label: "Backtest", path: "/backtest", icon: ChartNoAxesCombined },
   { label: "Portfolio", path: "/portfolio", icon: WalletCards },
 ];
