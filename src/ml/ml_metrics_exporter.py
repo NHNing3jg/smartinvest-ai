@@ -91,7 +91,11 @@ def _save_metrics(metrics: dict[str, Any], json_path: str, csv_path: str) -> Non
     pd.DataFrame([clean_metrics]).to_csv(csv_path, index=False)
 
 
+<<<<<<< HEAD
 def _load_font(size: int):
+=======
+def _load_font(size: int = 18):
+>>>>>>> origin/dev
     if ImageFont is None:
         return None
 
@@ -103,6 +107,7 @@ def _load_font(size: int):
     return ImageFont.load_default()
 
 
+<<<<<<< HEAD
 def _draw_centered_text(draw, box: tuple[int, int, int, int], text: str, font, fill) -> None:
     left, top, right, bottom = box
     text_box = draw.textbbox((0, 0), text, font=font)
@@ -110,12 +115,28 @@ def _draw_centered_text(draw, box: tuple[int, int, int, int], text: str, font, f
     height = text_box[3] - text_box[1]
     draw.text(
         (left + (right - left - width) / 2, top + (bottom - top - height) / 2),
+=======
+def _text_size(draw, text: str, font) -> tuple[int, int]:
+    bbox = draw.textbbox((0, 0), text, font=font)
+    return bbox[2] - bbox[0], bbox[3] - bbox[1]
+
+
+def _draw_centered_text(draw, box, text: str, font, fill=(20, 24, 33)) -> None:
+    left, top, right, bottom = box
+    width, height = _text_size(draw, text, font)
+    draw.text(
+        (
+            left + (right - left - width) / 2,
+            top + (bottom - top - height) / 2,
+        ),
+>>>>>>> origin/dev
         text,
         fill=fill,
         font=font,
     )
 
 
+<<<<<<< HEAD
 def _export_confusion_matrix_with_pillow(
     matrix,
     labels,
@@ -134,10 +155,31 @@ def _export_confusion_matrix_with_pillow(
     margin_left = 170
     margin_top = 140
     cell_size = 160
+=======
+def _save_confusion_matrix_png(matrix, labels, title: str, output_path: str) -> str | None:
+    if Image is None or ImageDraw is None:
+        print(f"[ML EXPORT] Confusion matrix PNG skipped for {title}: missing matplotlib and pillow")
+        return None
+
+    matrix_array = np.asarray(matrix, dtype=int)
+    if matrix_array.size == 0:
+        print(f"[ML EXPORT] Confusion matrix PNG skipped for {title}: empty matrix")
+        return None
+
+    labels = labels if labels is not None else list(range(matrix_array.shape[0]))
+    labels = [str(label) for label in labels]
+
+    image_width = 900
+    image_height = 720
+    margin_left = 170
+    margin_top = 135
+    cell_size = 170
+>>>>>>> origin/dev
     image = Image.new("RGB", (image_width, image_height), "white")
     draw = ImageDraw.Draw(image)
 
     title_font = _load_font(30)
+<<<<<<< HEAD
     label_font = _load_font(19)
     value_font = _load_font(28)
     small_font = _load_font(16)
@@ -145,6 +187,15 @@ def _export_confusion_matrix_with_pillow(
     draw.text((40, 34), f"{model_name} Confusion Matrix", fill=(15, 23, 42), font=title_font)
     draw.text((margin_left + 62, 96), "Predicted label", fill=(71, 85, 105), font=label_font)
     draw.text((38, margin_top + 140), "True label", fill=(71, 85, 105), font=label_font)
+=======
+    label_font = _load_font(20)
+    value_font = _load_font(28)
+    small_font = _load_font(16)
+
+    draw.text((40, 36), title, fill=(17, 24, 39), font=title_font)
+    draw.text((margin_left + 70, 92), "Predicted label", fill=(55, 65, 81), font=label_font)
+    draw.text((34, margin_top + 150), "True label", fill=(55, 65, 81), font=label_font)
+>>>>>>> origin/dev
 
     max_value = max(int(matrix_array.max()), 1)
     for row_index, true_label in enumerate(labels):
@@ -154,7 +205,10 @@ def _export_confusion_matrix_with_pillow(
             (margin_left - 120, y0, margin_left - 20, y0 + cell_size),
             true_label,
             label_font,
+<<<<<<< HEAD
             (15, 23, 42),
+=======
+>>>>>>> origin/dev
         )
 
         for col_index, predicted_label in enumerate(labels):
@@ -162,6 +216,7 @@ def _export_confusion_matrix_with_pillow(
             if row_index == 0:
                 _draw_centered_text(
                     draw,
+<<<<<<< HEAD
                     (x0, margin_top - 58, x0 + cell_size, margin_top - 12),
                     predicted_label,
                     label_font,
@@ -178,18 +233,40 @@ def _export_confusion_matrix_with_pillow(
                 width=2,
             )
             value_fill = (15, 23, 42) if value / max_value < 0.66 else (255, 255, 255)
+=======
+                    (x0, margin_top - 60, x0 + cell_size, margin_top - 10),
+                    predicted_label,
+                    label_font,
+                )
+
+            value = int(matrix_array[row_index, col_index])
+            intensity = int(235 - 155 * (value / max_value))
+            color = (intensity, min(245, intensity + 18), 255)
+            draw.rectangle(
+                (x0, y0, x0 + cell_size, y0 + cell_size),
+                fill=color,
+                outline=(148, 163, 184),
+                width=2,
+            )
+            value_fill = (15, 23, 42) if value / max_value < 0.65 else (255, 255, 255)
+>>>>>>> origin/dev
             _draw_centered_text(
                 draw,
                 (x0, y0, x0 + cell_size, y0 + cell_size),
                 str(value),
                 value_font,
+<<<<<<< HEAD
                 value_fill,
+=======
+                fill=value_fill,
+>>>>>>> origin/dev
             )
 
     total = int(matrix_array.sum())
     correct = int(np.trace(matrix_array))
     accuracy = correct / total if total else 0
     draw.text(
+<<<<<<< HEAD
         (40, image_height - 58),
         f"Observations: {total}    Correct: {correct}    Accuracy: {accuracy:.4f}",
         fill=(71, 85, 105),
@@ -211,6 +288,25 @@ def _export_feature_importance_with_pillow(
 
     if importance_df.empty:
         print(f"[ML EXPORT] Feature importance skipped for {model_name}: empty importance data")
+=======
+        (40, image_height - 64),
+        f"Observations: {total}    Correct: {correct}    Accuracy: {accuracy:.4f}",
+        fill=(55, 65, 81),
+        font=small_font,
+    )
+
+    image.save(output_path)
+    return output_path
+
+
+def _save_feature_importance_png(importance_df: pd.DataFrame, model_name: str, output_path: str) -> str | None:
+    if Image is None or ImageDraw is None:
+        print(f"[ML EXPORT] Feature importance PNG skipped for {model_name}: missing matplotlib and pillow")
+        return None
+
+    if importance_df.empty:
+        print(f"[ML EXPORT] Feature importance PNG skipped for {model_name}: empty importance data")
+>>>>>>> origin/dev
         return None
 
     plot_df = importance_df.head(25).copy()
@@ -218,10 +314,17 @@ def _export_feature_importance_with_pillow(
 
     image_width = 1200
     row_height = 34
+<<<<<<< HEAD
     margin_top = 112
     margin_bottom = 60
     margin_left = 315
     margin_right = 70
+=======
+    margin_top = 110
+    margin_bottom = 60
+    margin_left = 310
+    margin_right = 60
+>>>>>>> origin/dev
     image_height = margin_top + margin_bottom + len(plot_df) * row_height
 
     image = Image.new("RGB", (image_width, image_height), "white")
@@ -230,11 +333,19 @@ def _export_feature_importance_with_pillow(
     label_font = _load_font(16)
     small_font = _load_font(14)
 
+<<<<<<< HEAD
     draw.text((40, 34), f"{model_name} Feature Importance", fill=(15, 23, 42), font=title_font)
     draw.text((40, 74), "Top XGBoost feature importances", fill=(71, 85, 105), font=small_font)
 
     bar_left = margin_left
     bar_max_width = image_width - margin_left - margin_right - 105
+=======
+    draw.text((40, 36), f"{model_name} Feature Importance", fill=(17, 24, 39), font=title_font)
+    draw.text((40, 74), "Top features from the trained model", fill=(75, 85, 99), font=small_font)
+
+    bar_left = margin_left
+    bar_max_width = image_width - margin_left - margin_right - 100
+>>>>>>> origin/dev
 
     for row_index, row in enumerate(plot_df.itertuples(index=False)):
         y = margin_top + row_index * row_height
@@ -242,7 +353,11 @@ def _export_feature_importance_with_pillow(
         importance = float(row.importance)
         bar_width = int(bar_max_width * importance / max_importance)
 
+<<<<<<< HEAD
         draw.text((40, y + 6), feature[:35], fill=(31, 41, 55), font=label_font)
+=======
+        draw.text((40, y + 6), feature[:34], fill=(31, 41, 55), font=label_font)
+>>>>>>> origin/dev
         draw.rectangle(
             (bar_left, y + 5, bar_left + bar_max_width, y + row_height - 8),
             fill=(241, 245, 249),
@@ -254,12 +369,21 @@ def _export_feature_importance_with_pillow(
         draw.text(
             (bar_left + bar_max_width + 16, y + 5),
             f"{importance:.4f}",
+<<<<<<< HEAD
             fill=(71, 85, 105),
             font=small_font,
         )
 
     image.save(importance_path)
     return importance_path
+=======
+            fill=(55, 65, 81),
+            font=small_font,
+        )
+
+    image.save(output_path)
+    return output_path
+>>>>>>> origin/dev
 
 
 def _require_classification_dependencies() -> bool:
@@ -389,6 +513,7 @@ def export_classification_metrics(
                 plt.close()
                 print(f"[ML EXPORT] Confusion matrix saved: {matrix_path}")
             else:
+<<<<<<< HEAD
                 exported_path = _export_confusion_matrix_with_pillow(
                     matrix,
                     labels,
@@ -397,6 +522,16 @@ def export_classification_metrics(
                 )
                 if exported_path:
                     print(f"[ML EXPORT] Confusion matrix saved: {exported_path}")
+=======
+                saved_path = _save_confusion_matrix_png(
+                    matrix,
+                    labels,
+                    f"{model_name} Confusion Matrix",
+                    matrix_path,
+                )
+                if saved_path:
+                    print(f"[ML EXPORT] Confusion matrix saved: {saved_path}")
+>>>>>>> origin/dev
         except Exception as exc:
             if plt is not None:
                 plt.close()
@@ -538,14 +673,24 @@ def export_feature_importance(
             print(f"[ML EXPORT] Feature importance exported: {importance_path}")
             return importance_path
 
+<<<<<<< HEAD
         exported_path = _export_feature_importance_with_pillow(
+=======
+        saved_path = _save_feature_importance_png(
+>>>>>>> origin/dev
             importance_df,
             model_name,
             importance_path,
         )
+<<<<<<< HEAD
         if exported_path:
             print(f"[ML EXPORT] Feature importance exported: {exported_path}")
         return exported_path
+=======
+        if saved_path:
+            print(f"[ML EXPORT] Feature importance exported: {saved_path}")
+        return saved_path
+>>>>>>> origin/dev
     except Exception as exc:
         if plt is not None:
             plt.close()

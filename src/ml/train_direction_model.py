@@ -6,7 +6,6 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sklearn.metrics import (
     accuracy_score,
@@ -17,6 +16,22 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from xgboost import XGBClassifier
+
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError:
+    def load_dotenv(dotenv_path: str | os.PathLike[str] = ".env") -> bool:
+        path = Path(dotenv_path)
+        if not path.exists():
+            return False
+
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+        return True
 
 try:
     from src.ml.ml_metrics_exporter import (
