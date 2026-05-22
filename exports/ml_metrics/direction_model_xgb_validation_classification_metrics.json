@@ -1,7 +1,11 @@
 {
   "model_name": "direction_model_xgb_validation",
   "metric_type": "classification",
+<<<<<<< HEAD
+  "timestamp": "2026-05-11T15:03:53",
+=======
   "timestamp": "2026-05-11T14:15:04",
+>>>>>>> origin/dev
   "observations": 1150,
   "accuracy": 0.4791304347826087,
   "precision": 0.45897778113964727,
